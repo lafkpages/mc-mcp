@@ -291,20 +291,30 @@ public class McpServer {
                     }
 
                     double radius = ((Number) arguments.getOrDefault("radius", 10.0)).doubleValue();
+                    double radiusSquared = radius * radius;
 
                     List<String> entityList = java.util.stream.StreamSupport
                             .stream(MC.world.getEntities().spliterator(), false)
-                            .filter(e -> !e.equals(MC.player) && e.squaredDistanceTo(MC.player) <= radius * radius)
-                            .map(e -> String.format("%s (%s)", e.getName().getString(), e.getType().toString()))
+                            .filter(e -> !e.equals(MC.player) && e.squaredDistanceTo(MC.player) <= radiusSquared)
+                            .sorted((e1, e2) -> Double.compare(e1.squaredDistanceTo(MC.player),
+                                    e2.squaredDistanceTo(MC.player)))
+                            .map(e -> {
+                                double distance = Math.sqrt(e.squaredDistanceTo(MC.player));
+                                return String.format("- %s (%s) - %.1f blocks away",
+                                        e.getName().getString(),
+                                        e.getType().toString(),
+                                        distance);
+                            })
                             .toList();
 
-                    String result = entityList.isEmpty()
-                            ? "No entities found nearby"
-                            : String.join(", ", entityList);
+                    if (entityList.isEmpty()) {
+                        return new CallToolResult("No entities found within a " + radius + " block radius", false);
+                    }
 
-                    return new CallToolResult(
-                            String.format("Entities within %.1f blocks: %s", radius, result),
-                            false);
+                    String result = String.format("Entities within a %.1f block radius:\n%s", radius,
+                            String.join("\n", entityList));
+
+                    return new CallToolResult(result, false);
                 }));
 
         String mineAllArgumentsSchema = """
