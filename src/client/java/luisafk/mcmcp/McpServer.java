@@ -69,7 +69,8 @@ public class McpServer {
                 { "type": "object" }
                 """;
 
-        // Block on registration to ensure it completes
+        // Important: block on registration to ensure it completes
+
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("get_player_position", "Get the current position of the player",
                         emptySchema),
@@ -85,7 +86,34 @@ public class McpServer {
                             MC.player.getZ()), false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
-                .block(); // Important: block to ensure registration completes
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_player_biome", "Get the biome the player is currently in",
+                        emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null || MC.player == null) {
+                        return Mono.just(new CallToolResult("World or player not found - not in game",
+                                true));
+                    }
+
+                    return Mono.just(new CallToolResult(MC.world.getBiome(MC.player.getBlockPos()).toString(), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_player_dimension", "Get the current dimension of the player", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null) {
+                        return Mono.just(new CallToolResult("World not found - not in game", true));
+                    }
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Dimension: %s", MC.world.getRegistryKey().getValue()), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
     }
 
     public void stop() {
