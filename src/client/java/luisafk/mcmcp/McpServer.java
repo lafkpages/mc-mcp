@@ -276,6 +276,47 @@ public class McpServer {
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
+
+        String getNearbyEntitiesSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "radius": {
+                            "type": "number",
+                            "description": "Radius around the player to check for entities (in blocks). Less than 100 is considered close, more than 1000 is considered far.",
+                            "default": 10
+                        }
+                    },
+                    "required": []
+                }
+                """;
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_nearby_entities",
+                        "Get a list of entities near the player within a given radius",
+                        getNearbyEntitiesSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null || MC.world == null) {
+                        return Mono.just(new CallToolResult("Player or world not found - not in game", true));
+                    }
+
+                    double radius = ((Number) arguments.getOrDefault("radius", 10.0)).doubleValue();
+
+                    List<String> entityList = java.util.stream.StreamSupport
+                            .stream(MC.world.getEntities().spliterator(), false)
+                            .filter(e -> !e.equals(MC.player) && e.squaredDistanceTo(MC.player) <= radius * radius)
+                            .map(e -> String.format("%s (%s)", e.getName().getString(), e.getType().toString()))
+                            .toList();
+
+                    String result = entityList.isEmpty()
+                            ? "No entities found nearby"
+                            : String.join(", ", entityList);
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Entities within %.1f blocks: %s", radius, result), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
     }
 
     public void stop() {
