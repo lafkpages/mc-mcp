@@ -131,6 +131,72 @@ public class McpServer {
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_player_hunger", "Get the current hunger/food level of the player", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    // TODO: is it always really out of 20?
+                    return Mono.just(new CallToolResult(
+                            String.format("Hunger: %d / 20", MC.player.getHungerManager().getFoodLevel()), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_world_time", "Get the current world time of day", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null) {
+                        return Mono.just(new CallToolResult("World not found - not in game", true));
+                    }
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Time of day: %d (ticks)", MC.world.getTimeOfDay() % 24000), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_world_weather", "Get the current world weather", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null) {
+                        return Mono.just(new CallToolResult("World not found - not in game", true));
+                    }
+
+                    String weather;
+                    if (MC.world.isThundering()) {
+                        weather = "thunder";
+                    } else if (MC.world.isRaining()) {
+                        weather = "rain";
+                    } else {
+                        weather = "clear";
+                    }
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Weather: %s", weather), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("list_online_players", "Get the list of online players", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null) {
+                        return Mono.just(new CallToolResult("World not found - not in game", true));
+                    }
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Online players: %s", MC.world.getPlayers().stream()
+                                    .map(p -> p.getName().getString())
+                                    .reduce((a, b) -> a + ", " + b)
+                                    .orElse("No players online")),
+                            false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
     }
 
     public void stop() {
