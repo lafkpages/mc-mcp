@@ -342,7 +342,8 @@ public class McpServer {
                 """;
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("mine_all", "Uses Baritone to mine all blocks of the given types indefinitely",
+                new Tool("baritone_mine_all",
+                        "Uses Baritone to mine all blocks of the given types indefinitely. This tool will keep mining until stopped or no more of the specified blocks can be found. Internally uses the Baritone #mine command.",
                         mineAllArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
@@ -373,7 +374,7 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
-        String gotoArgumentsSchema = """
+        String baritoneGotoArgumentsSchema = """
                 {
                     "type": "object",
                     "properties": {
@@ -395,7 +396,9 @@ public class McpServer {
                 """;
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("goto", "Uses Baritone to go to a specified location", gotoArgumentsSchema),
+                new Tool("baritone_goto",
+                        "Uses Baritone to go to a specified location. Internally uses the Baritone #goto command.",
+                        baritoneGotoArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
