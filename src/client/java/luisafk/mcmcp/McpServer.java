@@ -392,8 +392,8 @@ public class McpServer {
                     "properties": {
                         "hotbarOnly": {
                             "type": "boolean",
-                            "description": "If true, only returns the items in the hotbar (first 9 slots). If false, returns all items in the inventory.",
-                            "default": true
+                            "description": "If true, only returns the items in the hotbar (first 9 slots). If false (default), returns all items in the inventory.",
+                            "default": false
                         }
                     }
                 }
@@ -407,21 +407,29 @@ public class McpServer {
                     }
 
                     List<ItemStack> hotbarItems = MC.player.getInventory().getMainStacks();
+                    StringBuilder itemsString = new StringBuilder();
 
-                    if ((Boolean) arguments.getOrDefault("hotbarOnly", true)) {
+                    Boolean hotbarOnly = (Boolean) arguments.getOrDefault("hotbarOnly", false);
+
+                    if (hotbarOnly) {
                         hotbarItems = hotbarItems.subList(0, HOTBAR_SIZE);
+
+                        itemsString.append("Hotbar items: ");
+                    } else {
+                        itemsString.append("Inventory items: ");
                     }
 
-                    StringBuilder itemsString = new StringBuilder();
                     for (ItemStack item : hotbarItems) {
                         if (!itemsString.isEmpty()) {
                             itemsString.append(", ");
                         }
-                        itemsString.append(item.toString());
-                    }
 
-                    if (itemsString.isEmpty()) {
-                        itemsString.append("No items in hotbar");
+                        if (item.isEmpty()) {
+                            itemsString.append("<empty slot>");
+                            continue;
+                        }
+
+                        itemsString.append(item.toString());
                     }
 
                     return Mono.just(new CallToolResult(itemsString.toString(), false));
