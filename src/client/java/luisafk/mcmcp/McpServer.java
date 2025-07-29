@@ -72,7 +72,7 @@ public class McpServer {
     }
 
     private void registerTools() {
-        String emptySchema = """
+        String emptyArgumentsSchema = """
                 { "type": "object" }
                 """;
 
@@ -83,7 +83,7 @@ public class McpServer {
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("get_player_position", "Get the current position of the player",
-                        emptySchema),
+                        emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game",
@@ -100,7 +100,7 @@ public class McpServer {
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("get_player_biome", "Get the biome the player is currently in",
-                        emptySchema),
+                        emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.world == null || MC.player == null) {
                         return Mono.just(new CallToolResult("World or player not found - not in game",
@@ -113,7 +113,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_player_dimension", "Get the current dimension of the player", emptySchema),
+                new Tool("get_player_dimension", "Get the current dimension of the player", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.world == null) {
                         return Mono.just(new CallToolResult("World not found - not in game", true));
@@ -126,7 +126,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_player_health", "Get the current health of the player", emptySchema),
+                new Tool("get_player_health", "Get the current health of the player", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
@@ -140,7 +140,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_player_hunger", "Get the current hunger/food level of the player", emptySchema),
+                new Tool("get_player_hunger", "Get the current hunger/food level of the player", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
@@ -154,7 +154,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_world_time", "Get the current world time of day", emptySchema),
+                new Tool("get_world_time", "Get the current world time of day", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.world == null) {
                         return Mono.just(new CallToolResult("World not found - not in game", true));
@@ -167,7 +167,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_world_weather", "Get the current world weather", emptySchema),
+                new Tool("get_world_weather", "Get the current world weather", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.world == null) {
                         return Mono.just(new CallToolResult("World not found - not in game", true));
@@ -189,7 +189,7 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_player_name", "Get the current player's name", emptySchema),
+                new Tool("get_player_name", "Get the current player's name", emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
@@ -203,7 +203,7 @@ public class McpServer {
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("list_online_players", "Get the list of online players (excluding the current player)",
-                        emptySchema),
+                        emptyArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.world == null || MC.player == null) {
                         return Mono.just(new CallToolResult("World or player not found - not in game", true));
@@ -236,7 +236,7 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
-        String getTargetedBlockSchema = """
+        String getTargetedBlockArgumentsSchema = """
                 {
                     "type": "object",
                     "properties": {
@@ -251,7 +251,8 @@ public class McpServer {
                 """;
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_targeted_block", "Get the block the player is looking at", getTargetedBlockSchema),
+                new Tool("get_targeted_block", "Get the block the player is looking at",
+                        getTargetedBlockArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null || MC.world == null) {
                         return Mono.just(new CallToolResult("Player or world not found - not in game", true));
@@ -277,7 +278,7 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
-        String getNearbyEntitiesSchema = """
+        String getNearbyEntitiesArgumentsSchema = """
                 {
                     "type": "object",
                     "properties": {
@@ -294,7 +295,7 @@ public class McpServer {
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("get_nearby_entities",
                         "Get a list of entities near the player within a given radius",
-                        getNearbyEntitiesSchema),
+                        getNearbyEntitiesArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null || MC.world == null) {
                         return Mono.just(new CallToolResult("Player or world not found - not in game", true));
@@ -314,6 +315,66 @@ public class McpServer {
 
                     return Mono.just(new CallToolResult(
                             String.format("Entities within %.1f blocks: %s", radius, result), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        String gotoArgumentsSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "x": {
+                            "type": "number",
+                            "description": "The integer X coordinate to go to."
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "The integer Y coordinate to go to. Optional."
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "The integer Z coordinate to go to."
+                        }
+                    },
+                    "required": ["x", "z"]
+                }
+                """;
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("goto", "Uses Baritone to go to a specified location", gotoArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    int x = ((Number) arguments.get("x")).intValue();
+                    int z = ((Number) arguments.get("z")).intValue();
+
+                    if (arguments.containsKey("y")) {
+                        int y = ((Number) arguments.get("y")).intValue();
+
+                        MC.player.networkHandler.sendChatMessage("#goto " + x + " " + y + " " + z);
+                    } else {
+                        MC.player.networkHandler.sendChatMessage("#goto " + x + " " + z);
+                    }
+
+                    return Mono.just(new CallToolResult("Set goal and started pathing successfully", false));
+
+                    // TODO: use BaritoneAPI
+
+                    // Goal goal;
+                    // if (arguments.containsKey("y")) {
+                    // int y = ((Number) arguments.get("y")).intValue();
+                    // goal = new GoalBlock(x, y, z);
+                    // } else {
+                    // goal = new GoalXZ(x, z);
+                    // }
+
+                    // BaritoneAPI.getProvider().getBaritoneForPlayer(MC.player).getCustomGoalProcess()
+                    // .setGoalAndPath(goal);
+
+                    // return Mono.just(new CallToolResult("Set goal and started pathing
+                    // successfully", false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
