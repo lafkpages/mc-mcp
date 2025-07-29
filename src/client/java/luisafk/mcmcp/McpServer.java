@@ -24,7 +24,9 @@ public class McpServer {
     private HttpServletSseServerTransportProvider transportProvider;
     private McpAsyncServer mcpServer;
 
-    public boolean start() {
+    public void start() {
+        LOGGER.info("Starting MCP Server...");
+
         server = new Server(25567);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
@@ -34,47 +36,61 @@ public class McpServer {
         ObjectMapper mapper = new ObjectMapper();
         transportProvider = new HttpServletSseServerTransportProvider(mapper, "/mcp/message");
 
-        // Create the MCP server
+        // Create the MCP server with logging
         mcpServer = io.modelcontextprotocol.server.McpServer.async(transportProvider)
                 .serverInfo(MOD_ID, MOD_VERSION)
                 .capabilities(ServerCapabilities.builder()
                         .tools(true) // Enable tools
+                        .logging() // Enable logging
                         .build())
                 .build();
 
-        // Use a single, more robust servlet mapping
-        // The transport provider will handle routing /mcp/message and /mcp/sse
-        // internally.
+        // Register tools BEFORE starting the server
+        registerTools();
+
+        // Register the servlet
         context.addServlet(new ServletHolder(transportProvider), "/mcp/*");
 
         // Start the server
         try {
             server.start();
-            System.out.println("MCP Server started on port 25567");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Exit if server fails to start
+            LOGGER.error("Failed to start MCP Server", e);
+            return;
         }
 
-        // Add your tools
-        registerTools();
-
-        return true;
+        LOGGER.info("MCP Server started on port 25567");
+        LOGGER.info("SSE endpoint: http://localhost:25567/mcp/sse");
+        LOGGER.info("Message endpoint: http://localhost:25567/mcp/message");
     }
 
     private void registerTools() {
+        String emptySchema = """
+                { "type": "object" }
+                """;
+
+        // Block on registration to ensure it completes
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_player_position", "Get the player's current position", "{ \"type\": \"object\" }"),
+                new Tool("get_player_position", "Get the current position of the player",
+                        emptySchema),
                 (exchange, arguments) -> {
-                    LOGGER.info("Tool 'get_player_position' called");
-                    return Mono.just(
-                            new CallToolResult(
-                                    MC.player == null ? "Player not found" : MC.player.getPos().toString(),
-                                    MC.player == null));
-                })).subscribe();
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game",
+                                true));
+                    }
+
+                    return Mono.just(new CallToolResult(String.format("X: %.2f, Y: %.2f, Z: %.2f",
+                            MC.player.getX(),
+                            MC.player.getY(),
+                            MC.player.getZ()), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block(); // Important: block to ensure registration completes
     }
 
     public void stop() {
+        LOGGER.info("Stopping MCP Server...");
+
         if (mcpServer != null) {
             mcpServer.closeGracefully().block();
         }
@@ -83,9 +99,9 @@ public class McpServer {
             try {
                 server.stop();
                 server.join();
+                LOGGER.info("MCP Server stopped");
             } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: idk what to do if server stop fails lmao
+                LOGGER.error("Error stopping server", e);
             }
         }
     }
