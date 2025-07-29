@@ -5,6 +5,7 @@ import static luisafk.mcmcp.Client.LOGGER;
 import static luisafk.mcmcp.Client.MC;
 import static luisafk.mcmcp.Client.MOD_ID;
 import static luisafk.mcmcp.Client.MOD_VERSION;
+import static net.minecraft.entity.player.PlayerInventory.HOTBAR_SIZE;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -380,6 +382,31 @@ public class McpServer {
 
                     // return Mono.just(new CallToolResult("Set goal and started pathing
                     // successfully", false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_hotbar", "Get the items in the hotbar of the player", emptyArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    List<ItemStack> hotbarItems = MC.player.getInventory().getMainStacks().subList(0, HOTBAR_SIZE);
+                    StringBuilder itemsString = new StringBuilder();
+                    for (ItemStack item : hotbarItems) {
+                        if (!itemsString.isEmpty()) {
+                            itemsString.append(", ");
+                        }
+                        itemsString.append(item.toString());
+                    }
+
+                    if (itemsString.isEmpty()) {
+                        itemsString.append("No items in hotbar");
+                    }
+
+                    return Mono.just(new CallToolResult(itemsString.toString(), false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
