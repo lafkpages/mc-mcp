@@ -5,6 +5,8 @@ import static luisafk.mcmcp.Client.MC;
 import static luisafk.mcmcp.Client.MOD_ID;
 import static luisafk.mcmcp.Client.MOD_VERSION;
 
+import java.util.List;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -17,6 +19,7 @@ import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportPro
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import reactor.core.publisher.Mono;
 
 public class McpServer {
@@ -188,8 +191,10 @@ public class McpServer {
                         return Mono.just(new CallToolResult("World not found - not in game", true));
                     }
 
+                    List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
+
                     return Mono.just(new CallToolResult(
-                            String.format("Online players: %s", MC.world.getPlayers().stream()
+                            String.format("Online players (%d): %s", players.size(), players.stream()
                                     .map(p -> p.getName().getString())
                                     .reduce((a, b) -> a + ", " + b)
                                     .orElse("No players online")),
