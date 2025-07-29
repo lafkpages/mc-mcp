@@ -191,6 +191,7 @@ public class McpServer {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
                     }
+
                     return Mono.just(new CallToolResult(
                             String.format("Player name: %s", MC.player.getName().getString()), false));
                 }))
