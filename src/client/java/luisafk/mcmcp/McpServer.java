@@ -21,6 +21,9 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import reactor.core.publisher.Mono;
 
 public class McpServer {
@@ -229,6 +232,47 @@ public class McpServer {
                                     players.size() - 1,
                                     playersList),
                             false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        String getTargetedBlockSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "includeFluids": {
+                            "type": "boolean",
+                            "description": "Whether to include fluids in the raycast. If true, the tool will return the fluid block if the player is looking at one. If false, it will only return solid blocks, ignoring fluids if there are any.",
+                            "default": false
+                        }
+                    },
+                    "required": []
+                }
+                """;
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_targeted_block", "Get the block the player is looking at", getTargetedBlockSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null || MC.world == null) {
+                        return Mono.just(new CallToolResult("Player or world not found - not in game", true));
+                    }
+
+                    HitResult hit = MC.player.raycast(MC.player.getBlockInteractionRange(), 0,
+                            (Boolean) arguments.getOrDefault("includeFluids", false));
+
+                    if (hit instanceof BlockHitResult) {
+                        BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();
+
+                        return Mono.just(new CallToolResult(
+                                String.format("Targeted block: %s at %s",
+                                        MC.world.getBlockState(blockPos).toString(),
+                                        blockPos.toShortString()),
+                                false));
+                    }
+
+                    return Mono.just(
+                            new CallToolResult(
+                                    String.format("No block targeted (hit type %s)", hit.getType().toString()), false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
