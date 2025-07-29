@@ -437,6 +437,26 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("baritone_stop",
+                        "Stops current Baritone processes such as mining via the mine_all tool or pathing via the goto tool.",
+                        emptyArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    if (!IS_BARITONE_INSTALLED) {
+                        return Mono.just(new CallToolResult("The Baritone mod is not installed", true));
+                    }
+
+                    MC.player.networkHandler.sendChatMessage("#stop");
+
+                    return Mono.just(new CallToolResult("Sent Baritone #stop command", false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
         String getInventoryArgumentsSchema = """
                 {
                     "type": "object",
