@@ -71,6 +71,9 @@ public class McpServer {
 
         // Important: block on registration to ensure it completes
 
+        // Important: tool descriptions must not contain apostrophes (') or they will
+        // not work in Raycast.
+
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
                 new Tool("get_player_position", "Get the current position of the player",
                         emptySchema),
@@ -111,6 +114,20 @@ public class McpServer {
 
                     return Mono.just(new CallToolResult(
                             String.format("Dimension: %s", MC.world.getRegistryKey().getValue()), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("get_player_health", "Get the current health of the player", emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    return Mono.just(new CallToolResult(
+                            String.format("Health: %.1f / %.1f", MC.player.getHealth(), MC.player.getMaxHealth()),
+                            false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
