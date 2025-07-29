@@ -15,6 +15,8 @@ public class Client implements ClientModInitializer {
 	public static final String MOD_VERSION = FABRIC_LOADER.getModContainer(MOD_ID).get().getMetadata().getVersion()
 			.getFriendlyString();
 
+	public static final Boolean IS_BARITONE_INSTALLED = FABRIC_LOADER.isModLoaded("baritone");
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private McpServer mcpServer;

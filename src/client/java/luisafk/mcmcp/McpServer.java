@@ -1,5 +1,6 @@
 package luisafk.mcmcp;
 
+import static luisafk.mcmcp.Client.IS_BARITONE_INSTALLED;
 import static luisafk.mcmcp.Client.LOGGER;
 import static luisafk.mcmcp.Client.MC;
 import static luisafk.mcmcp.Client.MOD_ID;
@@ -345,6 +346,10 @@ public class McpServer {
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    if (!IS_BARITONE_INSTALLED) {
+                        return Mono.just(new CallToolResult("The Baritone mod is not installed", true));
                     }
 
                     int x = ((Number) arguments.get("x")).intValue();
