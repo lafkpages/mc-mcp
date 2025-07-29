@@ -386,14 +386,32 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
+        String getInventoryArgumentsSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "hotbarOnly": {
+                            "type": "boolean",
+                            "description": "If true, only returns the items in the hotbar (first 9 slots). If false, returns all items in the inventory.",
+                            "default": true
+                        }
+                    }
+                }
+                """;
+
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("get_hotbar", "Get the items in the hotbar of the player", emptyArgumentsSchema),
+                new Tool("get_inventory", "Get the items in the inventory of the player", getInventoryArgumentsSchema),
                 (exchange, arguments) -> {
                     if (MC.player == null) {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
                     }
 
-                    List<ItemStack> hotbarItems = MC.player.getInventory().getMainStacks().subList(0, HOTBAR_SIZE);
+                    List<ItemStack> hotbarItems = MC.player.getInventory().getMainStacks();
+
+                    if ((Boolean) arguments.getOrDefault("hotbarOnly", true)) {
+                        hotbarItems = hotbarItems.subList(0, HOTBAR_SIZE);
+                    }
+
                     StringBuilder itemsString = new StringBuilder();
                     for (ItemStack item : hotbarItems) {
                         if (!itemsString.isEmpty()) {
