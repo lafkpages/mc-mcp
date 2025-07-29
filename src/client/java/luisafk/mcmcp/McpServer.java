@@ -325,6 +325,54 @@ public class McpServer {
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
 
+        String mineAllArgumentsSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "blocks": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of block names to mine (e.g., 'diamond_ore', 'iron_ore')."
+                        }
+                    },
+                    "required": ["blocks"]
+                }
+                """;
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("mine_all", "Uses Baritone to mine all blocks of the given types indefinitely",
+                        mineAllArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    if (!IS_BARITONE_INSTALLED) {
+                        return Mono.just(new CallToolResult("The Baritone mod is not installed", true));
+                    }
+
+                    Object blocksObj = arguments.get("blocks");
+
+                    if (!(blocksObj instanceof List<?> blocks) || blocks.isEmpty()) {
+                        return Mono.just(new CallToolResult("No blocks specified to mine", true));
+                    }
+
+                    StringBuilder command = new StringBuilder("#mine");
+
+                    for (Object block : blocks) {
+                        command.append(" ").append(block.toString());
+                    }
+
+                    MC.player.networkHandler.sendChatMessage(command.toString());
+
+                    return Mono
+                            .just(new CallToolResult("Started mining (ran Baritone command: " + command + ")", false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
         String gotoArgumentsSchema = """
                 {
                     "type": "object",
@@ -505,6 +553,7 @@ public class McpServer {
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
+
     }
 
     public void stop() {
