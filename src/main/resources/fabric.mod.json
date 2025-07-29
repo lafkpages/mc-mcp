@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "mc-mcp",
+  "version": "${version}",
+  "name": "MC MCP",
+  "description": "A Model Context Protocol (MCP) server for your Minecraft client.",
+  "authors": [
+    {
+      "name": "LuisAFK",
+      "contact": {
+        "email": "mc-mcp@luisafk.dev"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://github.com/lafkpages/mc-mcp",
+    "sources": "https://github.com/lafkpages/mc-mcp"
+  },
+  "icon": "assets/mc-mcp/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["luisafk.mcmcp.Client"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.6",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {
+    "baritone": "1.14.0",
+    "litematica": "0.23.3"
+  }
+}

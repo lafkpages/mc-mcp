@@ -1,0 +1,113 @@
+plugins {
+	id 'fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+configurations {
+    // This configuration will hold all the libraries we want to bundle into our mod
+    modShade
+
+    // Automatically add all `modImplementation` dependencies to our `modShade` configuration
+    modImplementation.extendsFrom(modShade)
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+	flatDir {
+		dirs 'libs'
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"mc-mcp" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+
+}
+
+dependencies {
+	// Minecraft and Fabric
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Baritone
+	modImplementation "baritone-standalone-fabric:baritone-standalone-fabric:${project.baritone_version}"
+    modImplementation "nether-pathfinder:nether-pathfinder:${project.nether_pathfinder_version}"
+
+	// Litematica
+	modImplementation "maven.modrinth:litematica:${project.litematica_version}"
+
+	// Malilib (required for Litematica)
+	modImplementation "maven.modrinth:malilib:${project.malilib_version}"
+
+	// MCP SDK core (includes Servlet transport)
+    modShade "io.modelcontextprotocol.sdk:mcp:${project.mcp_sdk_version}"
+
+	// Jetty
+    modShade "org.eclipse.jetty:jetty-server:${project.jetty_server_version}"
+    modShade "org.eclipse.jetty:jetty-servlet:${project.jetty_servlet_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": inputs.properties.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	inputs.property "archivesName", project.base.archivesName
+
+	from("LICENSE") {
+		rename { "${it}_${inputs.properties.archivesName}"}
+	}
+
+	// This tells the JAR task to find all the libraries in the 'modShade'
+    // configuration and embed them.
+    from {
+        configurations.modShade.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
