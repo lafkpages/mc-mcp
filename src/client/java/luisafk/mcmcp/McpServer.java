@@ -23,7 +23,10 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -418,7 +421,7 @@ public class McpServer {
                     }
 
                     for (int i = 0; i < (hotbarOnly ? HOTBAR_SIZE : itemStacks.size()); i++) {
-                        itemsString.append(String.format("\nSlot %d: ", i + 1));
+                        itemsString.append(String.format("\nSlot %d: ", i));
 
                         ItemStack item = itemStacks.get(i);
 
@@ -431,6 +434,74 @@ public class McpServer {
                     }
 
                     return Mono.just(new CallToolResult(itemsString.toString(), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        String setSelectedItemArgumentsSchema = """
+                {
+                    "type": "object",
+                    "properties": {
+                        "slotIndex": {
+                            "type": "integer",
+                            "description": "The slot number (0-8) to set as the selected item in the player's hand.",
+                            "minimum": 0,
+                            "maximum": 8
+                        }
+                    },
+                    "required": ["slotIndex"]
+                }
+                """;
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("set_selected_item", "Set the selected item in the player's hand",
+                        setSelectedItemArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    int slotIndex = ((Number) arguments.get("slotIndex")).intValue();
+
+                    PlayerInventory inventory = MC.player.getInventory();
+
+                    inventory.setSelectedSlot(slotIndex);
+
+                    return Mono.just(new CallToolResult("Selected item set to slot " + slotIndex, false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("use_item_in_hand_on_targeted_block",
+                        "Use the item in the hand of the player on the targeted block",
+                        emptyArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+
+                    HitResult hit = MC.player.raycast(MC.player.getBlockInteractionRange(), 0,
+                            (Boolean) arguments.getOrDefault("includeFluids", false));
+
+                    if (!(hit instanceof BlockHitResult)) {
+                        return Mono.just(new CallToolResult(
+                                "Not targeting a block (raycast hit type: " + hit.getType() + ")",
+                                true));
+                    }
+
+                    Hand activeHand = MC.player.getActiveHand();
+                    ActionResult result = MC.interactionManager.interactBlock(
+                            MC.player,
+                            activeHand,
+                            (BlockHitResult) hit);
+
+                    if (result == ActionResult.SUCCESS) {
+                        MC.player.swingHand(activeHand);
+                    }
+
+                    return Mono.just(new CallToolResult("Item used, got ActionResult: " + result,
+                            result.equals(ActionResult.FAIL)));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
                 .block();
