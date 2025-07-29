@@ -406,23 +406,21 @@ public class McpServer {
                         return Mono.just(new CallToolResult("Player not found - not in game", true));
                     }
 
-                    List<ItemStack> hotbarItems = MC.player.getInventory().getMainStacks();
+                    List<ItemStack> itemStacks = MC.player.getInventory().getMainStacks();
                     StringBuilder itemsString = new StringBuilder();
 
                     Boolean hotbarOnly = (Boolean) arguments.getOrDefault("hotbarOnly", false);
 
                     if (hotbarOnly) {
-                        hotbarItems = hotbarItems.subList(0, HOTBAR_SIZE);
-
-                        itemsString.append("Hotbar items: ");
+                        itemsString.append("Hotbar items:");
                     } else {
-                        itemsString.append("Inventory items: ");
+                        itemsString.append("Inventory items:");
                     }
 
-                    for (ItemStack item : hotbarItems) {
-                        if (!itemsString.isEmpty()) {
-                            itemsString.append(", ");
-                        }
+                    for (int i = 0; i < (hotbarOnly ? HOTBAR_SIZE : itemStacks.size()); i++) {
+                        itemsString.append(String.format("\nSlot %d: ", i + 1));
+
+                        ItemStack item = itemStacks.get(i);
 
                         if (item.isEmpty()) {
                             itemsString.append("<empty slot>");
