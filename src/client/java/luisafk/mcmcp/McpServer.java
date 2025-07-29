@@ -6,6 +6,7 @@ import static luisafk.mcmcp.Client.MOD_ID;
 import static luisafk.mcmcp.Client.MOD_VERSION;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -185,19 +186,47 @@ public class McpServer {
                 .block();
 
         mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
-                new Tool("list_online_players", "Get the list of online players", emptySchema),
+                new Tool("get_player_name", "Get the current player's name", emptySchema),
                 (exchange, arguments) -> {
-                    if (MC.world == null) {
-                        return Mono.just(new CallToolResult("World not found - not in game", true));
+                    if (MC.player == null) {
+                        return Mono.just(new CallToolResult("Player not found - not in game", true));
+                    }
+                    return Mono.just(new CallToolResult(
+                            String.format("Player name: %s", MC.player.getName().getString()), false));
+                }))
+                .doOnError(e -> LOGGER.error("Failed to register tool", e))
+                .block();
+
+        mcpServer.addTool(new McpServerFeatures.AsyncToolSpecification(
+                new Tool("list_online_players", "Get the list of online players (excluding the current player)",
+                        emptySchema),
+                (exchange, arguments) -> {
+                    if (MC.world == null || MC.player == null) {
+                        return Mono.just(new CallToolResult("World or player not found - not in game", true));
                     }
 
                     List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
+                    UUID currentPlayerUuid = MC.player.getUuid();
+
+                    String playersList = "";
+
+                    for (AbstractClientPlayerEntity player : players) {
+                        if (!player.getUuid().equals(currentPlayerUuid)) {
+                            if (!playersList.isEmpty()) {
+                                playersList += ", ";
+                            }
+                            playersList += player.getName().getString();
+                        }
+                    }
+
+                    if (playersList.isEmpty()) {
+                        playersList = "No other players online";
+                    }
 
                     return Mono.just(new CallToolResult(
-                            String.format("Online players (%d): %s", players.size(), players.stream()
-                                    .map(p -> p.getName().getString())
-                                    .reduce((a, b) -> a + ", " + b)
-                                    .orElse("No players online")),
+                            String.format("Other online players (%d excluding you): %s",
+                                    players.size() - 1,
+                                    playersList),
                             false));
                 }))
                 .doOnError(e -> LOGGER.error("Failed to register tool", e))
