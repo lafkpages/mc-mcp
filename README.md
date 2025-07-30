@@ -11,6 +11,8 @@ This mod targets Minecraft version 1.21.8. However, since it depends on Baritone
 
 Now you can build the mod using `./gradlew clean build`, or `.\gradlew clean build` on Windows.
 
+To run a Minecraft client with this mod loaded, use `./gradlew runClient`.
+
 ## LLM Prompt
 
 ```
