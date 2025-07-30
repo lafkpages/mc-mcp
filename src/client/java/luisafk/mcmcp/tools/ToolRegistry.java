@@ -12,6 +12,7 @@ import luisafk.mcmcp.tools.inventory.GetInventoryTool;
 import luisafk.mcmcp.tools.inventory.SetSelectedItemTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandOnTargetedBlockTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandTool;
+import luisafk.mcmcp.tools.misc.RunCommandTool;
 import luisafk.mcmcp.tools.player.GetPlayerBiomeTool;
 import luisafk.mcmcp.tools.player.GetPlayerDimensionTool;
 import luisafk.mcmcp.tools.player.GetPlayerHealthTool;
@@ -53,7 +54,10 @@ public class ToolRegistry {
             // Baritone tools
             new BaritoneGotoTool(),
             new BaritoneMineTool(),
-            new BaritoneStopTool());
+            new BaritoneStopTool(),
+
+            // Misc tools
+            new RunCommandTool());
 
     public static void registerAllTools(McpSyncServer mcpServer) {
         for (BaseTool tool : TOOLS) {
