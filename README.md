@@ -2,7 +2,7 @@
 
 ## Dev setup
 
-This mod targets Minecraft version 1.21.8. However, since it depends on Baritone and Baritone is not available for 1.21.8 yet, it must be downloaded from [this PR](https://github.com/cabaletta/baritone/pull/4820).
+This mod targets Minecraft version 1.21.8. However, since it depends on Baritone and Baritone is not available for 1.21.8 yet, it must be downloaded from [this PR](https://github.com/cabaletta/baritone/pull/4820). Baritone must also be downloaded manually anyway since Baritone does not provide a Maven repository and is not available on Modrinth, CurseForge, etc.
 
 1. Download the 1.21.8 version of Baritone from [here](https://nightly.link/cabaletta/baritone/actions/runs/16396403911/Artifacts.zip) (this is from the PR mentioned above).
 2. Extract the `Artifacts.zip`.
