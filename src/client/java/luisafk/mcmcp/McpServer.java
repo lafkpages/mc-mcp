@@ -524,6 +524,28 @@ public class McpServer {
                     return new CallToolResult("Selected item set to slot " + slotIndex, false);
                 }));
 
+        mcpServer.addTool(new McpServerFeatures.SyncToolSpecification(new Tool("use_item_in_hand",
+                "Use the item in the hand of the player. Note that this tool should not be used to use items on blocks, for that the `use_item_in_hand_on_targeted_block` tool should be used.",
+                emptyArgumentsSchema),
+                (exchange, arguments) -> {
+                    if (MC.player == null) {
+                        return new CallToolResult("Player not found - not in game", true);
+                    }
+
+                    Hand activeHand = MC.player.getActiveHand();
+                    ActionResult result = MC.interactionManager.interactItem(
+                            MC.player,
+                            activeHand);
+
+                    if (result.isAccepted()) {
+                        MC.player.swingHand(activeHand);
+                    }
+
+                    return new CallToolResult(
+                            "Item used, got ActionResult: " + result,
+                            result.equals(ActionResult.FAIL));
+                }));
+
         mcpServer.addTool(new McpServerFeatures.SyncToolSpecification(
                 new Tool("use_item_in_hand_on_targeted_block",
                         "Use the item in the hand of the player on the targeted block",
