@@ -60,8 +60,7 @@ public class GetNearbyBlocksTool extends BaseTool {
 
                     BlockPos pos = playerPos.add(dx, dy, dz);
                     BlockState state = MC.world.getBlockState(pos);
-                    String key = state.getBlock().getTranslationKey() + ":" + state.toString();
-                    uniqueBlocks.add(key);
+                    uniqueBlocks.add(state.toString());
 
                     checked++;
                 }
