@@ -24,6 +24,8 @@ public class GetPlayerPermissionLevelTool extends BaseTool {
             return playerNotFoundError();
         }
 
+        // See https://minecraft.fandom.com/wiki/Permission_level
+
         return new CallToolResult("Player permission/op level: " + MC.player.getPermissionLevel(), false);
     }
 }
