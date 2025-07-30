@@ -47,10 +47,15 @@ public class GetNearbyEntitiesTool extends BaseTool {
                 .sorted((e1, e2) -> Double.compare(e1.squaredDistanceTo(MC.player),
                         e2.squaredDistanceTo(MC.player)))
                 .map(e -> {
+                    double ex = e.getX();
+                    double ey = e.getY();
+                    double ez = e.getZ();
                     double distance = Math.sqrt(e.squaredDistanceTo(MC.player));
-                    return String.format("- %s (%s) - %.1f blocks away",
+
+                    return String.format("- %s (%s) at [%.1f, %.1f, %.1f] - %.1f blocks away",
                             e.getName().getString(),
                             e.getType().toString(),
+                            ex, ey, ez,
                             distance);
                 })
                 .toList();
