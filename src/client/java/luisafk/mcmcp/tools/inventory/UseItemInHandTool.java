@@ -16,7 +16,7 @@ public class UseItemInHandTool extends BaseTool {
     public McpServerFeatures.SyncToolSpecification create() {
         return new McpServerFeatures.SyncToolSpecification(
                 new Tool("use_item_in_hand",
-                        "Use the item in the hand of the player. Note that this tool should not be used to use items on blocks, for that the `use_item_in_hand_on_targeted_block` tool should be used.",
+                        "Use the item in the main hand of the player. This tool will not use the off-hand item. This tool should not be used to use items on blocks, for that the `use_item_in_hand_on_targeted_block` tool should be used.",
                         EMPTY_ARGUMENTS_SCHEMA),
                 this::execute);
     }
