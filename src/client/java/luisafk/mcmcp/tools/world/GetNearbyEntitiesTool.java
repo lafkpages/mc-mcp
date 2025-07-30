@@ -19,7 +19,7 @@ public class GetNearbyEntitiesTool extends BaseTool {
                     "radius": {
                         "type": "number",
                         "description": "Radius around the player to check for entities (in blocks). Less than 100 is considered close, more than 1000 is considered far.",
-                        "default": 10
+                        "default": 500
                     }
                 },
                 "required": []
@@ -53,7 +53,7 @@ public class GetNearbyEntitiesTool extends BaseTool {
             return worldOrPlayerNotFoundError();
         }
 
-        double radius = ((Number) arguments.getOrDefault("radius", 10.0)).doubleValue();
+        double radius = ((Number) arguments.getOrDefault("radius", 500.0)).doubleValue();
         double radiusSquared = radius * radius;
 
         List<EntityInfo> entityInfos = new java.util.ArrayList<>();
