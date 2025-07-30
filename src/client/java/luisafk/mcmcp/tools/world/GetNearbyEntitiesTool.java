@@ -33,6 +33,21 @@ public class GetNearbyEntitiesTool extends BaseTool {
                 this::execute);
     }
 
+    private static class EntityInfo {
+        final String name;
+        final String type;
+        final double x, y, z, distance;
+
+        EntityInfo(String name, String type, double x, double y, double z, double distance) {
+            this.name = name;
+            this.type = type;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.distance = distance;
+        }
+    }
+
     private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable() || !isWorldAvailable()) {
             return worldOrPlayerNotFoundError();
@@ -41,32 +56,38 @@ public class GetNearbyEntitiesTool extends BaseTool {
         double radius = ((Number) arguments.getOrDefault("radius", 10.0)).doubleValue();
         double radiusSquared = radius * radius;
 
-        List<String> entityList = java.util.stream.StreamSupport
-                .stream(MC.world.getEntities().spliterator(), false)
-                .filter(e -> !e.equals(MC.player) && e.squaredDistanceTo(MC.player) <= radiusSquared)
-                .sorted((e1, e2) -> Double.compare(e1.squaredDistanceTo(MC.player),
-                        e2.squaredDistanceTo(MC.player)))
-                .map(e -> {
-                    double ex = e.getX();
-                    double ey = e.getY();
-                    double ez = e.getZ();
-                    double distance = Math.sqrt(e.squaredDistanceTo(MC.player));
+        List<EntityInfo> entityInfos = new java.util.ArrayList<>();
+        for (var e : MC.world.getEntities()) {
+            if (e.equals(MC.player)) {
+                continue;
+            }
 
-                    return String.format("- %s (%s) at [%.1f, %.1f, %.1f] - %.1f blocks away",
-                            e.getName().getString(),
-                            e.getType().toString(),
-                            ex, ey, ez,
-                            distance);
-                })
-                .toList();
+            double distSq = e.squaredDistanceTo(MC.player);
 
-        if (entityList.isEmpty()) {
+            if (distSq > radiusSquared) {
+                continue;
+            }
+
+            entityInfos.add(new EntityInfo(
+                    e.getName().getString(),
+                    e.getType().toString(),
+                    e.getX(), e.getY(), e.getZ(),
+                    Math.sqrt(distSq)));
+        }
+
+        if (entityInfos.isEmpty()) {
             return new CallToolResult("No entities found within a " + radius + " block radius", false);
         }
 
-        String result = String.format("Entities within a %.1f block radius:\n%s", radius,
-                String.join("\n", entityList));
+        entityInfos.sort(java.util.Comparator.comparingDouble(info -> info.distance));
 
-        return new CallToolResult(result, false);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Entities within a %.1f block radius:\n", radius));
+        for (EntityInfo info : entityInfos) {
+            sb.append(String.format("- %s (%s) at [%.1f, %.1f, %.1f] - %.1f blocks away\n",
+                    info.name, info.type, info.x, info.y, info.z, info.distance));
+        }
+
+        return new CallToolResult(sb.toString().trim(), false);
     }
 }
