@@ -25,33 +25,34 @@ import luisafk.mcmcp.tools.world.GetWorldWeatherTool;
 import luisafk.mcmcp.tools.world.ListOnlinePlayersTool;
 
 public class ToolRegistry {
-
     private static final List<BaseTool> TOOLS = Arrays.asList(
+            // Tools, sorted alphabetically per category
+
             // Player tools
-            new GetPlayerPositionTool(),
             new GetPlayerBiomeTool(),
             new GetPlayerDimensionTool(),
             new GetPlayerHealthTool(),
             new GetPlayerHungerTool(),
             new GetPlayerNameTool(),
+            new GetPlayerPositionTool(),
 
             // World tools
+            new GetNearbyEntitiesTool(),
+            new GetTargetedBlockTool(),
             new GetWorldTimeTool(),
             new GetWorldWeatherTool(),
             new ListOnlinePlayersTool(),
-            new GetTargetedBlockTool(),
-            new GetNearbyEntitiesTool(),
 
             // Inventory tools
+            new ConsumeItemInHandTool(),
             new GetInventoryTool(),
             new SetSelectedItemTool(),
-            new UseItemInHandTool(),
             new UseItemInHandOnTargetedBlockTool(),
-            new ConsumeItemInHandTool(),
+            new UseItemInHandTool(),
 
             // Baritone tools
-            new BaritoneMineTool(),
             new BaritoneGotoTool(),
+            new BaritoneMineTool(),
             new BaritoneStopTool());
 
     public static void registerAllTools(McpSyncServer mcpServer) {
