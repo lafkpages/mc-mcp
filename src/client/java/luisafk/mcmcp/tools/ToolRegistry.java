@@ -7,6 +7,7 @@ import io.modelcontextprotocol.server.McpSyncServer;
 import luisafk.mcmcp.tools.baritone.BaritoneGotoTool;
 import luisafk.mcmcp.tools.baritone.BaritoneMineTool;
 import luisafk.mcmcp.tools.baritone.BaritoneStopTool;
+import luisafk.mcmcp.tools.inventory.ConsumeItemInHandTool;
 import luisafk.mcmcp.tools.inventory.GetInventoryTool;
 import luisafk.mcmcp.tools.inventory.SetSelectedItemTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandOnTargetedBlockTool;
@@ -46,6 +47,7 @@ public class ToolRegistry {
             new SetSelectedItemTool(),
             new UseItemInHandTool(),
             new UseItemInHandOnTargetedBlockTool(),
+            new ConsumeItemInHandTool(),
 
             // Baritone tools
             new BaritoneMineTool(),
