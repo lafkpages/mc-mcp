@@ -12,6 +12,7 @@ import luisafk.mcmcp.tools.inventory.GetInventoryTool;
 import luisafk.mcmcp.tools.inventory.SetSelectedItemTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandOnTargetedBlockTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandTool;
+import luisafk.mcmcp.tools.misc.GetPlayerPermissionLevelTool;
 import luisafk.mcmcp.tools.misc.RunCommandTool;
 import luisafk.mcmcp.tools.player.GetPlayerBiomeTool;
 import luisafk.mcmcp.tools.player.GetPlayerDimensionTool;
@@ -35,6 +36,7 @@ public class ToolRegistry {
             new GetPlayerHealthTool(),
             new GetPlayerHungerTool(),
             new GetPlayerNameTool(),
+            new GetPlayerPermissionLevelTool(),
             new GetPlayerPositionTool(),
 
             // World tools
