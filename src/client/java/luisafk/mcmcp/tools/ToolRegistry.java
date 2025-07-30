@@ -20,6 +20,7 @@ import luisafk.mcmcp.tools.player.GetPlayerHealthTool;
 import luisafk.mcmcp.tools.player.GetPlayerHungerTool;
 import luisafk.mcmcp.tools.player.GetPlayerNameTool;
 import luisafk.mcmcp.tools.player.GetPlayerPositionTool;
+import luisafk.mcmcp.tools.world.GetNearbyBlocksTool;
 import luisafk.mcmcp.tools.world.GetNearbyEntitiesTool;
 import luisafk.mcmcp.tools.world.GetTargetedBlockTool;
 import luisafk.mcmcp.tools.world.GetWorldTimeTool;
@@ -40,6 +41,7 @@ public class ToolRegistry {
             new GetPlayerPositionTool(),
 
             // World tools
+            new GetNearbyBlocksTool(),
             new GetNearbyEntitiesTool(),
             new GetTargetedBlockTool(),
             new GetWorldTimeTool(),
