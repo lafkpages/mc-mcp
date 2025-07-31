@@ -14,6 +14,7 @@ import luisafk.mcmcp.tools.inventory.UseItemInHandOnTargetedBlockTool;
 import luisafk.mcmcp.tools.inventory.UseItemInHandTool;
 import luisafk.mcmcp.tools.misc.GetPlayerPermissionLevelTool;
 import luisafk.mcmcp.tools.misc.RunCommandTool;
+import luisafk.mcmcp.tools.player.AttackTargetedBlockTool;
 import luisafk.mcmcp.tools.player.GetPlayerBiomeTool;
 import luisafk.mcmcp.tools.player.GetPlayerDimensionTool;
 import luisafk.mcmcp.tools.player.GetPlayerHealthTool;
@@ -33,6 +34,7 @@ public class ToolRegistry {
             // Tools, sorted alphabetically per category
 
             // Player tools
+            new AttackTargetedBlockTool(),
             new GetPlayerBiomeTool(),
             new GetPlayerDimensionTool(),
             new GetPlayerHealthTool(),
