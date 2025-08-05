@@ -42,7 +42,7 @@ public class GetTargetedBlockTool extends BaseTool {
         }
 
         HitResult hit = MC.player.raycast(MC.player.getBlockInteractionRange(), 0,
-                (Boolean) arguments.getOrDefault("includeFluids", false));
+                (boolean) arguments.getOrDefault("includeFluids", false));
 
         if (hit instanceof BlockHitResult) {
             BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();
