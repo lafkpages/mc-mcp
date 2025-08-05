@@ -26,6 +26,11 @@ public class LookAtPositionTool extends BaseTool {
                     "z": {
                         "type": "number",
                         "description": "The Z coordinate to look at."
+                    },
+                    "lookAtBlockCenter": {
+                        "type": "boolean",
+                        "description": "If true (default), the player will look at the center of the block at the specified coordinates. If false, the player will look at the exact coordinates.",
+                        "default": true
                     }
                 },
                 "required": ["x", "y", "z"]
@@ -49,6 +54,14 @@ public class LookAtPositionTool extends BaseTool {
         double targetX = ((Number) arguments.get("x")).doubleValue();
         double targetY = ((Number) arguments.get("y")).doubleValue();
         double targetZ = ((Number) arguments.get("z")).doubleValue();
+        boolean lookAtBlockCenter = (boolean) arguments.getOrDefault("lookAtBlockCenter", true);
+
+        if (lookAtBlockCenter) {
+            // Adjust the target position to the center of the block
+            targetX = targetX > 0 ? Math.floor(targetX) + 0.5 : Math.ceil(targetX) - 0.5;
+            targetY = targetY > 0 ? Math.floor(targetY) + 0.5 : Math.ceil(targetY) - 0.5;
+            targetZ = targetZ > 0 ? Math.floor(targetZ) + 0.5 : Math.ceil(targetZ) - 0.5;
+        }
 
         Vec3d playerPos = MC.player.getEyePos();
         Vec3d targetPos = new Vec3d(targetX, targetY, targetZ);
