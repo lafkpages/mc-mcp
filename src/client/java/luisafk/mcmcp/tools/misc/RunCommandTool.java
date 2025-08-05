@@ -26,7 +26,9 @@ public class RunCommandTool extends BaseTool {
     @Override
     public McpServerFeatures.SyncToolSpecification create() {
         return new McpServerFeatures.SyncToolSpecification(
-                new Tool("run_command", "Run a Minecraft command as the player.", SCHEMA),
+                new Tool("run_command",
+                        "Run a Minecraft command as the player. Note that the command's output will not be returned, so running commands such as `locate` here is useless.",
+                        SCHEMA),
                 this::execute);
     }
 
