@@ -56,12 +56,13 @@ public abstract class BaseTool {
             return new CallToolResult("Player is null, might not be in-game", true);
         }
 
-        CallToolResult result = execute(exchange, arguments);
+        CallToolResult toolResult = execute(exchange, arguments);
 
         CallToolResult.Builder builder = CallToolResult
-                .builder();
+                .builder()
+                .isError(toolResult.isError());
 
-        for (Content content : result.content()) {
+        for (Content content : toolResult.content()) {
             builder.addContent(content);
         }
 
