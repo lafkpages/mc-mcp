@@ -71,12 +71,17 @@ public abstract class BaseTool {
 
         long playerDamageTicksAgo = MC.world.getTime() - lastPlayerDamageTime;
         if (playerDamageTicksAgo < PLAYER_DAMAGE_NOTIFICATION_TIMEOUT) {
+            String source = lastPlayerDamageSource == null ? "unknown source"
+                    : String.format(
+                            "%s %s",
+                            lastPlayerDamageSource.getType(),
+                            lastPlayerDamageSource.getName().getString());
+
             builder.addTextContent(
                     String.format(
-                            "Warning: player was recently damaged, %d ticks ago by %s %s",
+                            "Warning: player was recently damaged, %d ticks ago by %s",
                             playerDamageTicksAgo,
-                            lastPlayerDamageSource.getType(),
-                            lastPlayerDamageSource.getName().getString()));
+                            source));
         }
 
         return builder.build();
