@@ -7,13 +7,15 @@ import java.util.Map;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.Content;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
 public abstract class BaseTool {
     private static final long PLAYER_DAMAGE_NOTIFICATION_TIMEOUT = 400; // 20 seconds
 
-    private long lastPlayerDamageTime = 0;
+    private long lastPlayerDamageTime;
+    private Entity lastPlayerDamageSource;
 
     public abstract String getName();
 
@@ -40,6 +42,7 @@ public abstract class BaseTool {
 
                 if (entity.getId() == MC.player.getId()) {
                     lastPlayerDamageTime = MC.world.getTime();
+                    lastPlayerDamageSource = source.getSource();
                 }
             }
         });
@@ -70,8 +73,10 @@ public abstract class BaseTool {
         if (playerDamageTicksAgo < PLAYER_DAMAGE_NOTIFICATION_TIMEOUT) {
             builder.addTextContent(
                     String.format(
-                            "Warning: player was recently damaged (%d ticks ago)",
-                            playerDamageTicksAgo));
+                            "Warning: player was recently damaged, %d ticks ago by %s %s",
+                            playerDamageTicksAgo,
+                            lastPlayerDamageSource.getType(),
+                            lastPlayerDamageSource.getName().getString()));
         }
 
         return builder.build();
