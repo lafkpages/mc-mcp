@@ -39,10 +39,6 @@ public class BaritoneMineTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         if (!IS_BARITONE_INSTALLED) {
             return new CallToolResult("The Baritone mod is not installed", true);
         }

@@ -20,10 +20,6 @@ public class GetSelectedItemTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         PlayerInventory inventory = MC.player.getInventory();
         int selectedSlot = inventory.getSelectedSlot();
         ItemStack selectedItem = inventory.getStack(selectedSlot);

@@ -29,7 +29,7 @@ public class ConsumeItemInHandTool extends BaseTool {
 
     public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!isPlayerAvailable()) {
+            if (MC.player == null) {
                 return;
             }
 
@@ -60,10 +60,6 @@ public class ConsumeItemInHandTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         if (MC.options.useKey.isPressed()) {
             return new CallToolResult("Right-click is already pressed", true);
         }

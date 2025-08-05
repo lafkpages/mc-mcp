@@ -18,10 +18,6 @@ public class GetPlayerPositionTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         return new CallToolResult(
                 String.format("X: %.2f, Y: %.2f, Z: %.2f",
                         MC.player.getX(),

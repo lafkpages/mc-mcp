@@ -51,10 +51,6 @@ public class CraftItemTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable() || !isWorldAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         @SuppressWarnings("unchecked")
         List<String> recipePattern = (List<String>) arguments.get("recipe");
         int requestedCount = ((Number) arguments.getOrDefault("count", 1)).intValue();

@@ -37,10 +37,6 @@ public class GetNearbyBlocksTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable() || !isWorldAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         double radius = ((Number) arguments.getOrDefault("radius", 5.0)).doubleValue();
         int iradius = (int) Math.ceil(radius);
 

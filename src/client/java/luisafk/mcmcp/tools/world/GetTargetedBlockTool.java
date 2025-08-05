@@ -37,12 +37,8 @@ public class GetTargetedBlockTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable() || !isWorldAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         HitResult hit = MC.player.raycast(MC.player.getBlockInteractionRange(), 0,
-                (boolean) arguments.getOrDefault("includeFluids", false));
+                (Boolean) arguments.getOrDefault("includeFluids", false));
 
         if (hit instanceof BlockHitResult) {
             BlockPos blockPos = ((BlockHitResult) hit).getBlockPos();

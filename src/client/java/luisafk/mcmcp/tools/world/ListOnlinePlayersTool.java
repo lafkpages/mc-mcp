@@ -21,10 +21,6 @@ public class ListOnlinePlayersTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable() || !isPlayerAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
         UUID currentPlayerUuid = MC.player.getUuid();
 

@@ -19,10 +19,6 @@ public class UseItemInHandTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         Hand activeHand = MC.player.getActiveHand();
         ActionResult result = MC.interactionManager.interactItem(
                 MC.player,

@@ -38,10 +38,6 @@ public class UseItemInHandOnTargetedBlockTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         HitResult hit = MC.player.raycast(MC.player.getBlockInteractionRange(), 0,
                 (Boolean) arguments.getOrDefault("includeFluids", true));
 

@@ -18,10 +18,6 @@ public class GetWorldWeatherTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable()) {
-            return worldNotFoundError();
-        }
-
         String weather;
         if (MC.world.isThundering()) {
             weather = "thunder";

@@ -18,10 +18,6 @@ public class GetPlayerDimensionTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable()) {
-            return worldNotFoundError();
-        }
-
         return new CallToolResult(
                 String.format("Dimension: %s", MC.world.getRegistryKey().getValue()),
                 false);

@@ -33,10 +33,6 @@ public class RunCommandTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         String command = (String) arguments.get("command");
 
         if (command == null || command.isBlank()) {

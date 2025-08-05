@@ -18,10 +18,6 @@ public class GetPlayerBiomeTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable() || !isPlayerAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         return new CallToolResult(MC.world.getBiome(MC.player.getBlockPos()).toString(), false);
     }
 }

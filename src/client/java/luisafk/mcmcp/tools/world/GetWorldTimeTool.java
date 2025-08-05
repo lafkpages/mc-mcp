@@ -18,10 +18,6 @@ public class GetWorldTimeTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable()) {
-            return worldNotFoundError();
-        }
-
         return new CallToolResult(
                 String.format("Time of day: %d (ticks)", MC.world.getTimeOfDay() % 24000),
                 false);

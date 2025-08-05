@@ -55,10 +55,6 @@ public class GetNearbyEntitiesTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable() || !isWorldAvailable()) {
-            return worldOrPlayerNotFoundError();
-        }
-
         double radius = ((Number) arguments.getOrDefault("radius", 500.0)).doubleValue();
         String filter = ((String) arguments.getOrDefault("filter", "")).toLowerCase().trim();
         double radiusSquared = radius * radius;

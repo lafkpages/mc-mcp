@@ -18,10 +18,6 @@ public class GetPlayerNameTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         return new CallToolResult(
                 String.format("Player name: %s", MC.player.getName().getString()),
                 false);

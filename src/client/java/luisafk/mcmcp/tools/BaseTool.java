@@ -5,8 +5,15 @@ import static luisafk.mcmcp.Client.MC;
 import java.util.Map;
 
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.spec.McpSchema.Content;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 
 public abstract class BaseTool {
+    private static final long PLAYER_DAMAGE_NOTIFICATION_TIMEOUT = 400; // 20 seconds
+
+    private long lastPlayerDamageTime = 0;
 
     public abstract String getName();
 
@@ -26,36 +33,46 @@ public abstract class BaseTool {
     }
 
     public void init() {
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(new ServerLivingEntityEvents.AfterDamage() {
+            @Override
+            public void afterDamage(LivingEntity entity, DamageSource source, float baseDamageTaken, float damageTaken,
+                    boolean blocked) {
+
+                if (entity.getId() == MC.player.getId()) {
+                    lastPlayerDamageTime = MC.world.getTime();
+                }
+            }
+        });
     }
 
     public abstract CallToolResult execute(Object exchange, Map<String, Object> arguments);
 
     public CallToolResult handler(Object exchange, Map<String, Object> arguments) {
+        if (MC.world == null) {
+            return new CallToolResult("World not found - not in game", true);
+        }
+
+        if (MC.player == null) {
+            return new CallToolResult("Player is null, might not be in-game", true);
+        }
+
         CallToolResult result = execute(exchange, arguments);
 
-        // TODO: append notifications
+        CallToolResult.Builder builder = CallToolResult
+                .builder();
 
-        return result;
+        for (Content content : result.content()) {
+            builder.addContent(content);
+        }
+
+        long playerDamageTicksAgo = MC.world.getTime() - lastPlayerDamageTime;
+        if (playerDamageTicksAgo < PLAYER_DAMAGE_NOTIFICATION_TIMEOUT) {
+            builder.addTextContent(
+                    String.format(
+                            "Warning: player was recently damaged (%d ticks ago)",
+                            playerDamageTicksAgo));
+        }
+
+        return builder.build();
     }
-
-    protected boolean isPlayerAvailable() {
-        return MC.player != null;
-    }
-
-    protected boolean isWorldAvailable() {
-        return MC.world != null;
-    }
-
-    protected CallToolResult playerNotFoundError() {
-        return new CallToolResult("Player not found - not in game", true);
-    }
-
-    protected CallToolResult worldNotFoundError() {
-        return new CallToolResult("World not found - not in game", true);
-    }
-
-    protected CallToolResult worldOrPlayerNotFoundError() {
-        return new CallToolResult("World or player not found - not in game", true);
-    }
-
 }

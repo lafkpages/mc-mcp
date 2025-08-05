@@ -36,10 +36,6 @@ public class SetSelectedItemTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         int slotIndex = ((Number) arguments.get("slotIndex")).intValue();
 
         PlayerInventory inventory = MC.player.getInventory();

@@ -36,10 +36,6 @@ public class GetInventoryTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         List<ItemStack> itemStacks = MC.player.getInventory().getMainStacks();
         StringBuilder itemsString = new StringBuilder();
 

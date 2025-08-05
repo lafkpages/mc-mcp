@@ -47,10 +47,6 @@ public class LookAtPositionTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         double targetX = ((Number) arguments.get("x")).doubleValue();
         double targetY = ((Number) arguments.get("y")).doubleValue();
         double targetZ = ((Number) arguments.get("z")).doubleValue();

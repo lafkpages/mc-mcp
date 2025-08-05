@@ -32,7 +32,7 @@ public class AttackTargetedBlockTool extends BaseTool {
 
     public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!isPlayerAvailable()) {
+            if (MC.player == null) {
                 return;
             }
 
@@ -94,10 +94,6 @@ public class AttackTargetedBlockTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         if (MC.options.attackKey.isPressed()) {
             return new CallToolResult("Attack key is already pressed", true);
         }

@@ -43,10 +43,6 @@ public class GetBlockAtPositionTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isWorldAvailable()) {
-            return worldNotFoundError();
-        }
-
         double x = ((Number) arguments.get("x")).doubleValue();
         double y = ((Number) arguments.get("y")).doubleValue();
         double z = ((Number) arguments.get("z")).doubleValue();

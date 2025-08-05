@@ -18,10 +18,6 @@ public class GetPlayerHungerTool extends BaseTool {
     }
 
     public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
-        if (!isPlayerAvailable()) {
-            return playerNotFoundError();
-        }
-
         // TODO: is it always really out of 20?
         return new CallToolResult(
                 String.format("Hunger: %d / 20", MC.player.getHungerManager().getFoodLevel()),
