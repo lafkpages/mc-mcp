@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.util.hit.BlockHitResult;
@@ -24,8 +22,15 @@ public class AttackTargetedBlockTool extends BaseTool {
     private BlockPos targetBlockPos = null;
     private Direction targetSide = null;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
+    public String getName() {
+        return "attack_targeted_block";
+    }
+
+    public String getDescription() {
+        return "Attack (mine/break) the block the player is currently looking at.";
+    }
+
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!isPlayerAvailable()) {
                 return;
@@ -86,15 +91,9 @@ public class AttackTargetedBlockTool extends BaseTool {
                 }
             }
         });
-
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("attack_targeted_block",
-                        "Attack (mine/break) the block the player is currently looking at.",
-                        EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

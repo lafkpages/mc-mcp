@@ -4,49 +4,49 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.util.math.Vec3d;
 
 public class LookAtPositionTool extends BaseTool {
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "x": {
-                        "type": "number",
-                        "description": "The X coordinate to look at."
-                    },
-                    "y": {
-                        "type": "number",
-                        "description": "The Y coordinate to look at."
-                    },
-                    "z": {
-                        "type": "number",
-                        "description": "The Z coordinate to look at."
-                    },
-                    "lookAtBlockCenter": {
-                        "type": "boolean",
-                        "description": "If true (default), the player will look at the center of the block at the specified coordinates. If false, the player will look at the exact coordinates.",
-                        "default": true
-                    }
-                },
-                "required": ["x", "y", "z"]
-            }
-            """;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("look_at_position",
-                        "Make the player look at a given position. Useful in combination with the `use_item_in_hand_on_targeted_block` tool to, for example, place blocks.",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "look_at_position";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Make the player look at a given position. Useful in combination with the `use_item_in_hand_on_targeted_block` tool to, for example, place blocks.";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "x": {
+                            "type": "number",
+                            "description": "The X coordinate to look at."
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "The Y coordinate to look at."
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "The Z coordinate to look at."
+                        },
+                        "lookAtBlockCenter": {
+                            "type": "boolean",
+                            "description": "If true (default), the player will look at the center of the block at the specified coordinates. If false, the player will look at the exact coordinates.",
+                            "default": true
+                        }
+                    },
+                    "required": ["x", "y", "z"]
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

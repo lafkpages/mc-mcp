@@ -6,38 +6,39 @@ import static luisafk.mcmcp.Client.MC;
 import java.util.List;
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class BaritoneMineTool extends BaseTool {
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "blocks": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "A list of block names to mine (e.g., 'diamond_ore', 'iron_ore')."
-                    }
-                },
-                "required": ["blocks"]
-            }
-            """;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("baritone_mine_all",
-                        "Uses Baritone to mine all blocks of the given types indefinitely. This tool will keep mining until stopped or no more of the specified blocks can be found. Internally uses the Baritone #mine command.",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "baritone_mine_all";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Uses Baritone to mine all blocks of the given types indefinitely. This tool will keep mining until stopped or no more of the specified blocks can be found. Internally uses the Baritone #mine command.";
+    }
+
+    @Override
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "blocks": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of block names to mine (e.g., 'diamond_ore', 'iron_ore')."
+                        }
+                    },
+                    "required": ["blocks"]
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

@@ -5,43 +5,44 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class BaritoneGotoTool extends BaseTool {
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "x": {
-                        "type": "number",
-                        "description": "The integer X coordinate to go to."
-                    },
-                    "y": {
-                        "type": "number",
-                        "description": "The integer Y coordinate to go to. Optional."
-                    },
-                    "z": {
-                        "type": "number",
-                        "description": "The integer Z coordinate to go to."
-                    }
-                },
-                "required": ["x", "z"]
-            }
-            """;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("baritone_goto",
-                        "Uses Baritone to go to a specified location. Internally uses the Baritone #goto command.",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "baritone_goto";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Uses Baritone to go to a specified location. Internally uses the Baritone #goto command.";
+    }
+
+    @Override
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "x": {
+                            "type": "number",
+                            "description": "The integer X coordinate to go to."
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "The integer Y coordinate to go to. Optional."
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "The integer Z coordinate to go to."
+                        }
+                    },
+                    "required": ["x", "z"]
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

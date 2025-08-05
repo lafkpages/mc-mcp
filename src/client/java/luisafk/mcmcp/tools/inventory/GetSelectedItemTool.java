@@ -4,24 +4,22 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 public class GetSelectedItemTool extends BaseTool {
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_selected_item", "Get information about the currently selected item in the player's hand",
-                        EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_selected_item";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get information about the currently selected item in the player's hand";
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

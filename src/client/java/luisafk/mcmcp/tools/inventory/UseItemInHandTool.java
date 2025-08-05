@@ -4,24 +4,21 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 
 public class UseItemInHandTool extends BaseTool {
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("use_item_in_hand",
-                        "Use the item in the main hand of the player. This tool will not use the off-hand item. This tool should not be used to use items on blocks, for that the `use_item_in_hand_on_targeted_block` tool should be used. For consumable items, such as food or potions, the `consume_item_in_hand` tool should be used instead.",
-                        EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
+    public String getName() {
+        return "use_item_in_hand";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Use the item in the main hand of the player. This tool will not use the off-hand item. This tool should not be used to use items on blocks, for that the `use_item_in_hand_on_targeted_block` tool should be used. For consumable items, such as food or potions, the `consume_item_in_hand` tool should be used instead.";
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

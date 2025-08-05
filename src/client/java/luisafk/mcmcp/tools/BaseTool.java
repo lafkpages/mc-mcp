@@ -2,12 +2,41 @@ package luisafk.mcmcp.tools;
 
 import static luisafk.mcmcp.Client.MC;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
+import java.util.Map;
+
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 
 public abstract class BaseTool {
 
-    public abstract McpServerFeatures.SyncToolSpecification create();
+    public abstract String getName();
+
+    public abstract String getDescription();
+
+    /**
+     * Defaults to an empty object schema.
+     */
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+                """;
+    }
+
+    public void init() {
+    }
+
+    public abstract CallToolResult execute(Object exchange, Map<String, Object> arguments);
+
+    public CallToolResult handler(Object exchange, Map<String, Object> arguments) {
+        CallToolResult result = execute(exchange, arguments);
+
+        // TODO: append notifications
+
+        return result;
+    }
 
     protected boolean isPlayerAvailable() {
         return MC.player != null;
@@ -29,7 +58,4 @@ public abstract class BaseTool {
         return new CallToolResult("World or player not found - not in game", true);
     }
 
-    protected static final String EMPTY_ARGUMENTS_SCHEMA = """
-            { "type": "object" }
-            """;
 }

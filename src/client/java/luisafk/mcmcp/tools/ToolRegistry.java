@@ -3,7 +3,9 @@ package luisafk.mcmcp.tools;
 import java.util.Arrays;
 import java.util.List;
 
+import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServer;
+import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.baritone.BaritoneGotoTool;
 import luisafk.mcmcp.tools.baritone.BaritoneMineTool;
 import luisafk.mcmcp.tools.baritone.BaritoneStopTool;
@@ -31,47 +33,55 @@ import luisafk.mcmcp.tools.world.GetWorldWeatherTool;
 import luisafk.mcmcp.tools.world.ListOnlinePlayersTool;
 
 public class ToolRegistry {
-    private static final List<BaseTool> TOOLS = Arrays.asList(
-            // Tools, sorted alphabetically per category
+        private static final List<BaseTool> TOOLS = Arrays.asList(
+                        // Tools, sorted alphabetically per category
 
-            // Player tools
-            new AttackTargetedBlockTool(),
-            new CraftItemTool(),
-            new GetPlayerBiomeTool(),
-            new GetPlayerDimensionTool(),
-            new GetPlayerHealthTool(),
-            new GetPlayerHungerTool(),
-            new GetPlayerNameTool(),
-            new GetPlayerPermissionLevelTool(),
-            new GetPlayerPositionTool(),
-            new LookAtPositionTool(),
+                        // Player tools
+                        new AttackTargetedBlockTool(),
+                        new CraftItemTool(),
+                        new GetPlayerBiomeTool(),
+                        new GetPlayerDimensionTool(),
+                        new GetPlayerHealthTool(),
+                        new GetPlayerHungerTool(),
+                        new GetPlayerNameTool(),
+                        new GetPlayerPermissionLevelTool(),
+                        new GetPlayerPositionTool(),
+                        new LookAtPositionTool(),
 
-            // World tools
-            new GetNearbyBlocksTool(),
-            new GetNearbyEntitiesTool(),
-            new GetTargetedBlockTool(),
-            new GetWorldTimeTool(),
-            new GetWorldWeatherTool(),
-            new ListOnlinePlayersTool(),
+                        // World tools
+                        new GetNearbyBlocksTool(),
+                        new GetNearbyEntitiesTool(),
+                        new GetTargetedBlockTool(),
+                        new GetWorldTimeTool(),
+                        new GetWorldWeatherTool(),
+                        new ListOnlinePlayersTool(),
 
-            // Inventory tools
-            new ConsumeItemInHandTool(),
-            new GetInventoryTool(),
-            new SetSelectedItemTool(),
-            new UseItemInHandOnTargetedBlockTool(),
-            new UseItemInHandTool(),
+                        // Inventory tools
+                        new ConsumeItemInHandTool(),
+                        new GetInventoryTool(),
+                        new SetSelectedItemTool(),
+                        new UseItemInHandOnTargetedBlockTool(),
+                        new UseItemInHandTool(),
 
-            // Baritone tools
-            new BaritoneGotoTool(),
-            new BaritoneMineTool(),
-            new BaritoneStopTool(),
+                        // Baritone tools
+                        new BaritoneGotoTool(),
+                        new BaritoneMineTool(),
+                        new BaritoneStopTool(),
 
-            // Misc tools
-            new RunCommandTool());
+                        // Misc tools
+                        new RunCommandTool());
 
-    public static void registerAllTools(McpSyncServer mcpServer) {
-        for (BaseTool tool : TOOLS) {
-            mcpServer.addTool(tool.create());
+        public static void registerAllTools(McpSyncServer mcpServer) {
+                for (BaseTool tool : TOOLS) {
+                        mcpServer.addTool(
+                                        new SyncToolSpecification(
+                                                        new Tool(
+                                                                        tool.getName(),
+                                                                        tool.getDescription(),
+                                                                        tool.getArgumentsSchema()),
+                                                        tool::handler));
+
+                        tool.init();
+                }
         }
-    }
 }

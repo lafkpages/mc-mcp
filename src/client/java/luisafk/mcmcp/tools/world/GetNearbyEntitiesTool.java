@@ -5,39 +5,38 @@ import static luisafk.mcmcp.Client.MC;
 import java.util.List;
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class GetNearbyEntitiesTool extends BaseTool {
 
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "radius": {
-                        "type": "number",
-                        "description": "Radius around the player to check for entities (in blocks). Less than 100 is considered close, more than 1000 is considered far.",
-                        "default": 500
-                    },
-                    "filter": {
-                        "type": "string",
-                        "description": "Optional filter to search for entities by name or type. Case-insensitive partial matching.",
-                        "default": ""
-                    }
-                },
-                "required": []
-            }
-            """;
+    public String getName() {
+        return "get_nearby_entities";
+    }
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_nearby_entities",
-                        "Get a list of entities near the player within a given radius, optionally filtered by name or type",
-                        SCHEMA),
-                this::execute);
+    public String getDescription() {
+        return "Get a list of entities near the player within a given radius, optionally filtered by name or type";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "radius": {
+                            "type": "number",
+                            "description": "Radius around the player to check for entities (in blocks). Less than 100 is considered close, more than 1000 is considered far.",
+                            "default": 500
+                        },
+                        "filter": {
+                            "type": "string",
+                            "description": "Optional filter to search for entities by name or type. Case-insensitive partial matching.",
+                            "default": ""
+                        }
+                    },
+                    "required": []
+                }
+                """;
     }
 
     private static class EntityInfo {
@@ -55,7 +54,7 @@ public class GetNearbyEntitiesTool extends BaseTool {
         }
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable() || !isWorldAvailable()) {
             return worldOrPlayerNotFoundError();
         }

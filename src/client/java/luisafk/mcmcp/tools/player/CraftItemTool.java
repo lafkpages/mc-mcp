@@ -5,9 +5,7 @@ import static luisafk.mcmcp.Client.MC;
 import java.util.List;
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,40 +16,41 @@ import net.minecraft.screen.slot.SlotActionType;
 
 public class CraftItemTool extends BaseTool {
 
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "recipe": {
-                        "type": "array",
-                        "description": "Crafting grid represented as an array of item names. Use null for empty slots. Items are arranged left-to-right, top-to-bottom. For 2x2 crafting (player inventory), provide 4 items. For 3x3 crafting (crafting table), provide 9 items.",
-                        "items": {
-                            "type": ["string", "null"]
-                        },
-                        "minItems": 4,
-                        "maxItems": 9
-                    },
-                    "count": {
-                        "type": "number",
-                        "description": "Number of items to craft (will attempt multiple crafting operations if needed)",
-                        "default": 1,
-                        "minimum": 1
-                    }
-                },
-                "required": ["recipe"]
-            }
-            """;
-
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("craft_item",
-                        "Craft an item using the player's inventory (2x2) or crafting table (3x3). Recipe size determines which interface to use.",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "craft_item";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Craft an item using the player's inventory (2x2) or crafting table (3x3). Recipe size determines which interface to use.";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "recipe": {
+                            "type": "array",
+                            "description": "Crafting grid represented as an array of item names. Use null for empty slots. Items are arranged left-to-right, top-to-bottom. For 2x2 crafting (player inventory), provide 4 items. For 3x3 crafting (crafting table), provide 9 items.",
+                            "items": {
+                                "type": ["string", "null"]
+                            },
+                            "minItems": 4,
+                            "maxItems": 9
+                        },
+                        "count": {
+                            "type": "number",
+                            "description": "Number of items to craft (will attempt multiple crafting operations if needed)",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    "required": ["recipe"]
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable() || !isWorldAvailable()) {
             return worldOrPlayerNotFoundError();
         }

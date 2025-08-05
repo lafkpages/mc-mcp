@@ -6,35 +6,36 @@ import static net.minecraft.entity.player.PlayerInventory.HOTBAR_SIZE;
 import java.util.List;
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.item.ItemStack;
 
 public class GetInventoryTool extends BaseTool {
 
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "hotbarOnly": {
-                        "type": "boolean",
-                        "description": "If true, only returns the items in the hotbar (first 9 slots). If false (default), returns all items in the inventory.",
-                        "default": false
-                    }
-                }
-            }
-            """;
-
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_inventory", "Get the items in the inventory of the player", SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_inventory";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get the items in the inventory of the player";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "hotbarOnly": {
+                            "type": "boolean",
+                            "description": "If true, only returns the items in the hotbar (first 9 slots). If false (default), returns all items in the inventory.",
+                            "default": false
+                        }
+                    }
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

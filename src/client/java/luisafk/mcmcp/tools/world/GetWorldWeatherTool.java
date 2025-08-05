@@ -4,21 +4,20 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class GetWorldWeatherTool extends BaseTool {
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_world_weather", "Get the current world weather", EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_world_weather";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get the current world weather";
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isWorldAvailable()) {
             return worldNotFoundError();
         }

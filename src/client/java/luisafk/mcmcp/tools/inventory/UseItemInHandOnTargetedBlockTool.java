@@ -4,9 +4,7 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -14,30 +12,32 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class UseItemInHandOnTargetedBlockTool extends BaseTool {
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "includeFluids": {
-                        "type": "boolean",
-                        "description": "Whether to include fluids in the raycast. If true (default), the tool will use the item on fluid block if the player is looking at one. If false, it will only use the item on solid blocks, ignoring fluids if there are any.",
-                        "default": true
-                    }
-                },
-                "required": []
-            }
-            """;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("use_item_in_hand_on_targeted_block",
-                        "Use the item in the hand of the player on the targeted block",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "use_item_in_hand_on_targeted_block";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Use the item in the hand of the player on the targeted block";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "includeFluids": {
+                            "type": "boolean",
+                            "description": "Whether to include fluids in the raycast. If true (default), the tool will use the item on fluid block if the player is looking at one. If false, it will only use the item on solid blocks, ignoring fluids if there are any.",
+                            "default": true
+                        }
+                    },
+                    "required": []
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

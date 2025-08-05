@@ -4,44 +4,45 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
 public class GetBlockAtPositionTool extends BaseTool {
 
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "x": {
-                        "type": "number",
-                        "description": "X coordinate of the block position"
-                    },
-                    "y": {
-                        "type": "number",
-                        "description": "Y coordinate of the block position"
-                    },
-                    "z": {
-                        "type": "number",
-                        "description": "Z coordinate of the block position"
-                    }
-                },
-                "required": ["x", "y", "z"]
-            }
-            """;
-
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_block_at_position", "Get information about the block at a specific position", SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_block_at_position";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get information about the block at a specific position";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "x": {
+                            "type": "number",
+                            "description": "X coordinate of the block position"
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "Y coordinate of the block position"
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "Z coordinate of the block position"
+                        }
+                    },
+                    "required": ["x", "y", "z"]
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isWorldAvailable()) {
             return worldNotFoundError();
         }

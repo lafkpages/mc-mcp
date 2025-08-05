@@ -4,21 +4,20 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerBiomeTool extends BaseTool {
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_player_biome", "Get the biome the player is currently in", EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_player_biome";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get the biome the player is currently in";
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isWorldAvailable() || !isPlayerAvailable()) {
             return worldOrPlayerNotFoundError();
         }

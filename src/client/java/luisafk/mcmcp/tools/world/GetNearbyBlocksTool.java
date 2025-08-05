@@ -5,38 +5,38 @@ import static luisafk.mcmcp.Client.MC;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
 public class GetNearbyBlocksTool extends BaseTool {
-    private static final String SCHEMA = """
-            {
-                "type": "object",
-                "properties": {
-                    "radius": {
-                        "type": "number",
-                        "description": "Radius around the player to check for block types (in blocks).",
-                        "default": 5
-                    }
-                },
-                "required": []
-            }
-            """;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_nearby_blocks",
-                        "Get the unique block types (with state) and their counts within a given radius of the player",
-                        SCHEMA),
-                this::execute);
+    public String getName() {
+        return "get_nearby_blocks";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get the unique block types (with state) and their counts within a given radius of the player";
+    }
+
+    public String getArgumentsSchema() {
+        return """
+                {
+                    "type": "object",
+                    "properties": {
+                        "radius": {
+                            "type": "number",
+                            "description": "Radius around the player to check for block types (in blocks).",
+                            "default": 5
+                        }
+                    },
+                    "required": []
+                }
+                """;
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable() || !isWorldAvailable()) {
             return worldOrPlayerNotFoundError();
         }

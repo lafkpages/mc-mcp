@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.component.ComponentMap;
@@ -21,8 +19,15 @@ public class ConsumeItemInHandTool extends BaseTool {
     private CompletableFuture<CallToolResult> currentConsumption = null;
     private int consumeTicks = 0;
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
+    public String getName() {
+        return "consume_item_in_hand";
+    }
+
+    public String getDescription() {
+        return "Consume the item in the hand of the player. This tool can be used to, for example, eat food items or drink potions. It will not work if the item in hand is not consumable.";
+    }
+
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!isPlayerAvailable()) {
                 return;
@@ -52,15 +57,9 @@ public class ConsumeItemInHandTool extends BaseTool {
                 }
             }
         });
-
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("consume_item_in_hand",
-                        "Consume the item in the hand of the player. This tool can be used to, for example, eat food items or drink potions. It will not work if the item in hand is not consumable.",
-                        EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isPlayerAvailable()) {
             return playerNotFoundError();
         }

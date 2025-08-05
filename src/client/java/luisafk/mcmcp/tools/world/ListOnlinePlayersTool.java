@@ -6,23 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.BaseTool;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 
 public class ListOnlinePlayersTool extends BaseTool {
 
-    @Override
-    public McpServerFeatures.SyncToolSpecification create() {
-        return new McpServerFeatures.SyncToolSpecification(
-                new Tool("list_online_players", "Get the list of online players (excluding the current player)",
-                        EMPTY_ARGUMENTS_SCHEMA),
-                this::execute);
+    public String getName() {
+        return "list_online_players";
     }
 
-    private CallToolResult execute(Object exchange, Map<String, Object> arguments) {
+    public String getDescription() {
+        return "Get the list of online players (excluding the current player)";
+    }
+
+    public CallToolResult execute(Object exchange, Map<String, Object> arguments) {
         if (!isWorldAvailable() || !isPlayerAvailable()) {
             return worldOrPlayerNotFoundError();
         }
