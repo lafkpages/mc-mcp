@@ -68,8 +68,8 @@ public class LookAtPositionTool extends BaseTool {
         Vec3d direction = targetPos.subtract(playerPos).normalize();
 
         // Calculate yaw and pitch
-        double yaw = Math.atan2(-direction.x, direction.z) * 180.0 / Math.PI;
-        double pitch = Math.asin(-direction.y) * 180.0 / Math.PI;
+        double yaw = Math.toDegrees(Math.atan2(-direction.x, direction.z));
+        double pitch = Math.toDegrees(Math.asin(-direction.y));
 
         // Set the player's rotation
         MC.player.setYaw((float) yaw);
