@@ -2,9 +2,8 @@ package luisafk.mcmcp.tools.world;
 
 import static luisafk.mcmcp.Client.MC;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
@@ -32,7 +31,8 @@ public class GetNearbyBlocksTool extends BaseTool {
     public McpServerFeatures.SyncToolSpecification create() {
         return new McpServerFeatures.SyncToolSpecification(
                 new Tool("get_nearby_blocks",
-                        "Get the unique block types (with state) within a given radius of the player", SCHEMA),
+                        "Get the unique block types (with state) and their counts within a given radius of the player",
+                        SCHEMA),
                 this::execute);
     }
 
@@ -46,7 +46,7 @@ public class GetNearbyBlocksTool extends BaseTool {
 
         BlockPos playerPos = MC.player.getBlockPos();
 
-        Set<String> uniqueBlocks = new HashSet<>();
+        Map<String, Integer> blockCounts = new HashMap<>();
 
         int checked = 0;
         for (int dx = -iradius; dx <= iradius; dx++) {
@@ -60,23 +60,30 @@ public class GetNearbyBlocksTool extends BaseTool {
 
                     BlockPos pos = playerPos.add(dx, dy, dz);
                     BlockState state = MC.world.getBlockState(pos);
-                    uniqueBlocks.add(state.toString());
+                    String blockStateString = state.toString();
+
+                    blockCounts.put(blockStateString, blockCounts.getOrDefault(blockStateString, 0) + 1);
 
                     checked++;
                 }
             }
         }
 
-        if (uniqueBlocks.isEmpty()) {
+        if (blockCounts.isEmpty()) {
             return new CallToolResult("No blocks found within a " + radius + " block radius", false);
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Unique block types (with state) within %.1f blocks of player (checked %d blocks):\n",
-                radius, checked));
-        for (String block : uniqueBlocks) {
-            sb.append("- ").append(block).append("\n");
-        }
+        sb.append(
+                String.format("Block types (with state) and counts within %.1f blocks of player (checked %d blocks):\n",
+                        radius, checked));
+
+        // Sort by count (descending) for better readability
+        blockCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .forEach(entry -> {
+                    sb.append(String.format("- %s: %d blocks\n", entry.getKey(), entry.getValue()));
+                });
 
         return new CallToolResult(sb.toString(), false);
     }
