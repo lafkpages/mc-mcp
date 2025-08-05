@@ -12,7 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
 public abstract class BaseTool {
-    private static final long PLAYER_DAMAGE_NOTIFICATION_TIMEOUT = 400; // 20 seconds
+    private static final long PLAYER_DAMAGE_NOTIFICATION_TIMEOUT = 1200; // 20 seconds
 
     private long lastPlayerDamageTime;
     private Entity lastPlayerDamageSource;
