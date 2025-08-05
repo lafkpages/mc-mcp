@@ -20,6 +20,11 @@ public class GetNearbyEntitiesTool extends BaseTool {
                         "type": "number",
                         "description": "Radius around the player to check for entities (in blocks). Less than 100 is considered close, more than 1000 is considered far.",
                         "default": 500
+                    },
+                    "filter": {
+                        "type": "string",
+                        "description": "Optional filter to search for entities by name or type. Case-insensitive partial matching.",
+                        "default": ""
                     }
                 },
                 "required": []
@@ -29,7 +34,9 @@ public class GetNearbyEntitiesTool extends BaseTool {
     @Override
     public McpServerFeatures.SyncToolSpecification create() {
         return new McpServerFeatures.SyncToolSpecification(
-                new Tool("get_nearby_entities", "Get a list of entities near the player within a given radius", SCHEMA),
+                new Tool("get_nearby_entities",
+                        "Get a list of entities near the player within a given radius, optionally filtered by name or type",
+                        SCHEMA),
                 this::execute);
     }
 
@@ -54,6 +61,7 @@ public class GetNearbyEntitiesTool extends BaseTool {
         }
 
         double radius = ((Number) arguments.getOrDefault("radius", 500.0)).doubleValue();
+        String filter = ((String) arguments.getOrDefault("filter", "")).toLowerCase().trim();
         double radiusSquared = radius * radius;
 
         List<EntityInfo> entityInfos = new java.util.ArrayList<>();
@@ -68,6 +76,16 @@ public class GetNearbyEntitiesTool extends BaseTool {
                 continue;
             }
 
+            String entityName = e.getName().getString().toLowerCase();
+            String entityType = e.getType().toString().toLowerCase();
+
+            // Apply filter if provided
+            if (!filter.isEmpty()) {
+                if (!entityName.contains(filter) && !entityType.contains(filter)) {
+                    continue;
+                }
+            }
+
             entityInfos.add(new EntityInfo(
                     e.getName().getString(),
                     e.getType().toString(),
@@ -76,13 +94,21 @@ public class GetNearbyEntitiesTool extends BaseTool {
         }
 
         if (entityInfos.isEmpty()) {
-            return new CallToolResult("No entities found within a " + radius + " block radius", false);
+            String message = filter.isEmpty()
+                    ? "No entities found within a " + radius + " block radius"
+                    : "No entities matching '" + filter + "' found within a " + radius + " block radius";
+            return new CallToolResult(message, false);
         }
 
         entityInfos.sort(java.util.Comparator.comparingDouble(info -> info.distance));
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Entities within a %.1f block radius:\n", radius));
+        if (filter.isEmpty()) {
+            sb.append(String.format("Entities within a %.1f block radius:\n", radius));
+        } else {
+            sb.append(String.format("Entities matching '%s' within a %.1f block radius:\n", filter, radius));
+        }
+
         for (EntityInfo info : entityInfos) {
             sb.append(String.format("- %s (%s) at [%.1f, %.1f, %.1f] - %.1f blocks away\n",
                     info.name, info.type, info.x, info.y, info.z, info.distance));
