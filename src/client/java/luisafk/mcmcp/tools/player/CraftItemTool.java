@@ -14,6 +14,8 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 
+// TODO: https://deepwiki.com/search/crafting-is-kinda-unreliable-h_3db1979d-5f9d-4dce-9a52-a59cd880060c
+
 public class CraftItemTool extends BaseTool {
 
     public String getName() {
