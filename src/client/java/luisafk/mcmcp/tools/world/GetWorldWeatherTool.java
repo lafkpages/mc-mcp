@@ -28,7 +28,10 @@ public class GetWorldWeatherTool extends BaseTool {
         }
 
         return new CallToolResult(
-                String.format("Weather: %s", weather),
+                String.format("""
+                        Weather: %s
+                        Possible values: thunder, rain, clear
+                        """, weather),
                 false);
     }
 }
