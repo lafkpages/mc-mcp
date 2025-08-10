@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 public class Config {
 
-    public static ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
+    public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
             .id(Identifier.of(MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("mc-mcp.json5"))
