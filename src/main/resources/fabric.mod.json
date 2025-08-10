@@ -19,13 +19,15 @@
   "icon": "assets/mc-mcp/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["luisafk.mcmcp.Client"]
+    "client": ["luisafk.mcmcp.Client"],
+    "modmenu": ["luisafk.mcmcp.config.ModMenuIntegration"]
   },
   "depends": {
     "fabricloader": ">=0.16.14",
     "minecraft": "~1.21.6",
     "java": ">=21",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "yet_another_config_lib_v3": ">=3.7.1+1.21.6-fabric"
   },
   "recommends": {
     "baritone": "1.14.0",
