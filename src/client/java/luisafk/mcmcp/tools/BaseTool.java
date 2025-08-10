@@ -1,5 +1,6 @@
 package luisafk.mcmcp.tools;
 
+import static luisafk.mcmcp.Client.CONFIG;
 import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
@@ -54,8 +55,10 @@ public abstract class BaseTool {
             builder.addContent(content);
         }
 
-        for (Content content : AdvisorRegistry.getAll()) {
-            builder.addContent(content);
+        if (CONFIG.enableAdvisors) {
+            for (Content content : AdvisorRegistry.getAll()) {
+                builder.addContent(content);
+            }
         }
 
         return builder.build();
