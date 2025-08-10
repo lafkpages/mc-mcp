@@ -29,7 +29,8 @@ public abstract class BaseTool {
                 """;
     }
 
-    public abstract void init();
+    public void init() {
+    }
 
     public abstract CallToolResult execute(Object exchange, Map<String, Object> arguments);
 
