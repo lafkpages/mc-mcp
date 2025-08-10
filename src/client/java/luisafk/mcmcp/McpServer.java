@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
+import luisafk.mcmcp.advisors.AdvisorRegistry;
 import luisafk.mcmcp.tools.ToolRegistry;
 
 public class McpServer {
@@ -43,6 +44,7 @@ public class McpServer {
 
         // Register tools BEFORE starting the server
         ToolRegistry.registerAllTools(mcpServer);
+        AdvisorRegistry.initAll();
 
         // Register the servlet
         context.addServlet(new ServletHolder(transportProvider), "/mcp/*");

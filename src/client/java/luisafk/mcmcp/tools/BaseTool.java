@@ -4,18 +4,13 @@ import static luisafk.mcmcp.Client.MC;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.ApiStatus.NonExtendable;
+
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.Content;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
+import luisafk.mcmcp.advisors.AdvisorRegistry;
 
 public abstract class BaseTool {
-    private static final long PLAYER_DAMAGE_NOTIFICATION_TIMEOUT = 1200; // 20 seconds
-
-    private long lastPlayerDamageTime;
-    private Entity lastPlayerDamageSource;
 
     public abstract String getName();
 
@@ -34,22 +29,11 @@ public abstract class BaseTool {
                 """;
     }
 
-    public void init() {
-        ServerLivingEntityEvents.AFTER_DAMAGE.register(new ServerLivingEntityEvents.AfterDamage() {
-            @Override
-            public void afterDamage(LivingEntity entity, DamageSource source, float baseDamageTaken, float damageTaken,
-                    boolean blocked) {
-
-                if (entity.getId() == MC.player.getId()) {
-                    lastPlayerDamageTime = MC.world.getTime();
-                    lastPlayerDamageSource = source.getSource();
-                }
-            }
-        });
-    }
+    public abstract void init();
 
     public abstract CallToolResult execute(Object exchange, Map<String, Object> arguments);
 
+    @NonExtendable
     public CallToolResult handler(Object exchange, Map<String, Object> arguments) {
         if (MC.world == null) {
             return new CallToolResult("World not found - not in game", true);
@@ -69,19 +53,8 @@ public abstract class BaseTool {
             builder.addContent(content);
         }
 
-        long playerDamageTicksAgo = MC.world.getTime() - lastPlayerDamageTime;
-        if (playerDamageTicksAgo < PLAYER_DAMAGE_NOTIFICATION_TIMEOUT) {
-            String source = lastPlayerDamageSource == null ? "unknown source"
-                    : String.format(
-                            "%s %s",
-                            lastPlayerDamageSource.getType(),
-                            lastPlayerDamageSource.getName().getString());
-
-            builder.addTextContent(
-                    String.format(
-                            "Warning: player was recently damaged, %d ticks ago by %s",
-                            playerDamageTicksAgo,
-                            source));
+        for (Content content : AdvisorRegistry.getAll()) {
+            builder.addContent(content);
         }
 
         return builder.build();
