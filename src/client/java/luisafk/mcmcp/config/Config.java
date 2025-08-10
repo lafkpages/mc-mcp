@@ -10,6 +10,10 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.util.Identifier;
 
+// See:
+// - https://github.com/copilot/c/5cc06f05-83ab-4a24-82ba-88962d35677f
+// - https://github.com/copilot/c/2c7e83bb-3bdd-4368-9af4-101a7ab56214
+
 public class Config {
 
     public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
