@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerPositionTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_position";
-    }
-
     public String getDescription() {
         return "Get the current position of the player";
     }

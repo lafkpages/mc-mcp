@@ -12,10 +12,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class GetTargetedBlockTool extends BaseTool {
 
-    public String getName() {
-        return "get_targeted_block";
-    }
-
     public String getDescription() {
         return "Get the block the player is looking at";
     }

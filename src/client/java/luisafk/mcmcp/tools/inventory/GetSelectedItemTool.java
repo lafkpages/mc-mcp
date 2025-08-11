@@ -11,10 +11,6 @@ import net.minecraft.item.ItemStack;
 
 public class GetSelectedItemTool extends BaseTool {
 
-    public String getName() {
-        return "get_selected_item";
-    }
-
     public String getDescription() {
         return "Get information about the currently selected item in the player's hand";
     }

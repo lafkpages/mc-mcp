@@ -10,10 +10,6 @@ import net.minecraft.entity.player.PlayerInventory;
 
 public class SetSelectedItemTool extends BaseTool {
 
-    public String getName() {
-        return "set_selected_item";
-    }
-
     public String getDescription() {
         return "Set the selected item in the player's hand";
     }

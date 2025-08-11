@@ -13,10 +13,6 @@ import net.minecraft.util.hit.HitResult;
 
 public class UseItemInHandOnTargetedBlockTool extends BaseTool {
 
-    public String getName() {
-        return "use_item_in_hand_on_targeted_block";
-    }
-
     public String getDescription() {
         return "Use the item in the hand of the player on the targeted block";
     }

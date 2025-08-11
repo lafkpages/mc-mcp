@@ -18,10 +18,6 @@ import net.minecraft.screen.slot.SlotActionType;
 
 public class CraftItemTool extends BaseTool {
 
-    public String getName() {
-        return "craft_item";
-    }
-
     public String getDescription() {
         return "Craft an item using the player's inventory (2x2) or crafting table (3x3). Recipe size determines which interface to use.";
     }

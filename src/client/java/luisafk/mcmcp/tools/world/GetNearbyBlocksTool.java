@@ -12,10 +12,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class GetNearbyBlocksTool extends BaseTool {
 
-    public String getName() {
-        return "get_nearby_blocks";
-    }
-
     public String getDescription() {
         return "Get the unique block types (with state) and their counts within a given radius of the player";
     }

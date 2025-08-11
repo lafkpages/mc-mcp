@@ -9,10 +9,6 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class BaritoneStopTool extends BaseTool {
-    public String getName() {
-        return "baritone_stop";
-    }
-
     public String getDescription() {
         return "Stops current Baritone processes such as mining via the mine_all tool or pathing via the goto tool.";
     }

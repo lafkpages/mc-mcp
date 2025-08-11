@@ -1,20 +1,25 @@
 package luisafk.mcmcp;
 
+import static luisafk.mcmcp.Client.CONFIG;
 import static luisafk.mcmcp.Client.LOGGER;
 import static luisafk.mcmcp.Client.MOD_ID;
 import static luisafk.mcmcp.Client.MOD_VERSION;
+import static luisafk.mcmcp.tools.ToolRegistry.TOOLS;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.jetbrains.annotations.NotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
+import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.advisors.AdvisorRegistry;
-import luisafk.mcmcp.tools.ToolRegistry;
+import luisafk.mcmcp.tools.BaseTool;
 
 public class McpServer {
     private Server server;
@@ -42,8 +47,10 @@ public class McpServer {
                         .build())
                 .build();
 
-        // Register tools BEFORE starting the server
-        ToolRegistry.registerAllTools(mcpServer);
+        // Register enabled tools (runs init on all tools enabled or not)
+        initialRegisterEnabledTools();
+
+        // Register advisors
         AdvisorRegistry.initAll();
 
         // Register the servlet
@@ -78,5 +85,34 @@ public class McpServer {
                 LOGGER.error("Error stopping server", e);
             }
         }
+    }
+
+    public void initialRegisterEnabledTools() {
+        TOOLS.forEach((toolName, tool) -> {
+            tool.init();
+
+            if (!CONFIG.isToolEnabled(toolName)) {
+                return;
+            }
+
+            registerTool(toolName, tool);
+        });
+    }
+
+    public void registerTool(@NotNull String toolName, @NotNull BaseTool tool) {
+        LOGGER.info("Registering tool: " + toolName);
+
+        mcpServer.addTool(
+                new SyncToolSpecification(
+                        new Tool(
+                                toolName,
+                                tool.getDescription(),
+                                tool.getArgumentsSchema()),
+                        tool::handler));
+    }
+
+    public void unregisterTool(String toolName) {
+        LOGGER.info("Unregistering tool: " + toolName);
+        mcpServer.removeTool(toolName);
     }
 }

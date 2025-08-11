@@ -10,10 +10,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetNearbyEntitiesTool extends BaseTool {
 
-    public String getName() {
-        return "get_nearby_entities";
-    }
-
     public String getDescription() {
         return "Get a list of entities near the player within a given radius, optionally filtered by name or type";
     }

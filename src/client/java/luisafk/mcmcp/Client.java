@@ -15,16 +15,19 @@ public class Client implements ClientModInitializer {
 	public static final String MOD_ID = "mc-mcp";
 	public static final String MOD_VERSION = FABRIC_LOADER.getModContainer(MOD_ID).get().getMetadata().getVersion()
 			.getFriendlyString();
+	public static Client MOD_INSTANCE;
 
 	public static final Boolean IS_BARITONE_INSTALLED = FABRIC_LOADER.isModLoaded("baritone");
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static final Config CONFIG = Config.HANDLER.instance();
 
-	private McpServer mcpServer;
+	public McpServer mcpServer;
 
 	@Override
 	public void onInitializeClient() {
+		MOD_INSTANCE = this;
+
 		Config.HANDLER.load();
 
 		// Start the MCP server when the mod initializes

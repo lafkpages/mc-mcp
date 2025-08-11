@@ -12,10 +12,6 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 
 public class ListOnlinePlayersTool extends BaseTool {
 
-    public String getName() {
-        return "list_online_players";
-    }
-
     public String getDescription() {
         return "Get the list of online players (excluding the current player)";
     }

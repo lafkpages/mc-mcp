@@ -19,10 +19,6 @@ public class ConsumeItemInHandTool extends BaseTool {
     private CompletableFuture<CallToolResult> currentConsumption = null;
     private int consumeTicks = 0;
 
-    public String getName() {
-        return "consume_item_in_hand";
-    }
-
     public String getDescription() {
         return "Consume the item in the hand of the player. This tool can be used to, for example, eat food items or drink potions. It will not work if the item in hand is not consumable.";
     }

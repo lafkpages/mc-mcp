@@ -12,10 +12,6 @@ import net.minecraft.item.ItemStack;
 
 public class GetInventoryTool extends BaseTool {
 
-    public String getName() {
-        return "get_inventory";
-    }
-
     public String getDescription() {
         return "Get the items in the inventory of the player";
     }

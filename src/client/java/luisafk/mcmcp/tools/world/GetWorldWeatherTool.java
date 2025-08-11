@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetWorldWeatherTool extends BaseTool {
 
-    public String getName() {
-        return "get_world_weather";
-    }
-
     public String getDescription() {
         return "Get the current world weather";
     }

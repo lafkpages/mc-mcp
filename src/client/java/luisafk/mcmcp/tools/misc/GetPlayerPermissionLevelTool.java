@@ -8,10 +8,6 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerPermissionLevelTool extends BaseTool {
-    public String getName() {
-        return "get_player_permission_level";
-    }
-
     public String getDescription() {
         return "Get the player's permission/op level (0-4) in the current world/server.";
     }

@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerHungerTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_hunger";
-    }
-
     public String getDescription() {
         return "Get the current hunger/food level of the player";
     }

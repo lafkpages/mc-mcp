@@ -13,8 +13,6 @@ import luisafk.mcmcp.advisors.AdvisorRegistry;
 
 public abstract class BaseTool {
 
-    public abstract String getName();
-
     public abstract String getDescription();
 
     /**

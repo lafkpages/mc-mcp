@@ -2,6 +2,9 @@ package luisafk.mcmcp.config;
 
 import static luisafk.mcmcp.Client.MOD_ID;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.GsonBuilder;
 
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
@@ -16,16 +19,22 @@ import net.minecraft.util.Identifier;
 
 public class Config {
 
-    public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
-            .id(Identifier.of(MOD_ID, "config"))
-            .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("mc-mcp.json5"))
-                    .appendGsonBuilder(GsonBuilder::setPrettyPrinting)
-                    .setJson5(true)
-                    .build())
-            .build();
+        public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
+                        .id(Identifier.of(MOD_ID, "config"))
+                        .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                                        .setPath(YACLPlatform.getConfigDir().resolve("mc-mcp.json5"))
+                                        .appendGsonBuilder(GsonBuilder::setPrettyPrinting)
+                                        .setJson5(true)
+                                        .build())
+                        .build();
 
-    @SerialEntry
-    public boolean enableAdvisors = true;
+        @SerialEntry
+        public Map<String, Boolean> enabledTools = new HashMap<>();
 
+        @SerialEntry
+        public boolean enableAdvisors = true;
+
+        public boolean isToolEnabled(String toolName) {
+                return enabledTools.getOrDefault(toolName, true);
+        }
 }

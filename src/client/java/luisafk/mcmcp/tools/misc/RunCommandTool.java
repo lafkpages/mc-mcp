@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class RunCommandTool extends BaseTool {
 
-    public String getName() {
-        return "run_command";
-    }
-
     public String getDescription() {
         return "Run a Minecraft command as the player. Note that the command's output will not be returned, so running commands such as `locate` here is useless.";
     }

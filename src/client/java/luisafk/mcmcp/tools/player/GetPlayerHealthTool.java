@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerHealthTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_health";
-    }
-
     public String getDescription() {
         return "Get the current health of the player";
     }

@@ -1,11 +1,8 @@
 package luisafk.mcmcp.tools;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
-import io.modelcontextprotocol.server.McpSyncServer;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
 import luisafk.mcmcp.tools.baritone.BaritoneGotoTool;
 import luisafk.mcmcp.tools.baritone.BaritoneMineTool;
 import luisafk.mcmcp.tools.baritone.BaritoneStopTool;
@@ -33,55 +30,43 @@ import luisafk.mcmcp.tools.world.GetWorldWeatherTool;
 import luisafk.mcmcp.tools.world.ListOnlinePlayersTool;
 
 public class ToolRegistry {
-        private static final List<BaseTool> TOOLS = Arrays.asList(
-                        // Tools, sorted alphabetically per category
+    public static final Map<String, BaseTool> TOOLS = new HashMap<>();
+    static {
+        // Tools, sorted alphabetically per category
 
-                        // Player tools
-                        new AttackTargetedBlockTool(),
-                        new CraftItemTool(),
-                        new GetPlayerBiomeTool(),
-                        new GetPlayerDimensionTool(),
-                        new GetPlayerHealthTool(),
-                        new GetPlayerHungerTool(),
-                        new GetPlayerNameTool(),
-                        new GetPlayerPermissionLevelTool(),
-                        new GetPlayerPositionTool(),
-                        new LookAtPositionTool(),
+        // Player tools
+        TOOLS.put("attack_targeted_block", new AttackTargetedBlockTool());
+        TOOLS.put("craft_item", new CraftItemTool());
+        TOOLS.put("get_player_biome", new GetPlayerBiomeTool());
+        TOOLS.put("get_player_dimension", new GetPlayerDimensionTool());
+        TOOLS.put("get_player_health", new GetPlayerHealthTool());
+        TOOLS.put("get_player_hunger", new GetPlayerHungerTool());
+        TOOLS.put("get_player_name", new GetPlayerNameTool());
+        TOOLS.put("get_player_permission_level", new GetPlayerPermissionLevelTool());
+        TOOLS.put("get_player_position", new GetPlayerPositionTool());
+        TOOLS.put("look_at_position", new LookAtPositionTool());
 
-                        // World tools
-                        new GetNearbyBlocksTool(),
-                        new GetNearbyEntitiesTool(),
-                        new GetTargetedBlockTool(),
-                        new GetWorldTimeTool(),
-                        new GetWorldWeatherTool(),
-                        new ListOnlinePlayersTool(),
+        // World tools
+        TOOLS.put("get_nearby_blocks", new GetNearbyBlocksTool());
+        TOOLS.put("get_nearby_entities", new GetNearbyEntitiesTool());
+        TOOLS.put("get_targeted_block", new GetTargetedBlockTool());
+        TOOLS.put("get_world_time", new GetWorldTimeTool());
+        TOOLS.put("get_world_weather", new GetWorldWeatherTool());
+        TOOLS.put("list_online_players", new ListOnlinePlayersTool());
 
-                        // Inventory tools
-                        new ConsumeItemInHandTool(),
-                        new GetInventoryTool(),
-                        new SetSelectedItemTool(),
-                        new UseItemInHandOnTargetedBlockTool(),
-                        new UseItemInHandTool(),
+        // Inventory tools
+        TOOLS.put("consume_item_in_hand", new ConsumeItemInHandTool());
+        TOOLS.put("get_inventory", new GetInventoryTool());
+        TOOLS.put("set_selected_item", new SetSelectedItemTool());
+        TOOLS.put("use_item_in_hand_on_targeted_block", new UseItemInHandOnTargetedBlockTool());
+        TOOLS.put("use_item_in_hand", new UseItemInHandTool());
 
-                        // Baritone tools
-                        new BaritoneGotoTool(),
-                        new BaritoneMineTool(),
-                        new BaritoneStopTool(),
+        // Baritone tools
+        TOOLS.put("baritone_goto", new BaritoneGotoTool());
+        TOOLS.put("baritone_mine", new BaritoneMineTool());
+        TOOLS.put("baritone_stop", new BaritoneStopTool());
 
-                        // Misc tools
-                        new RunCommandTool());
-
-        public static void registerAllTools(McpSyncServer mcpServer) {
-                for (BaseTool tool : TOOLS) {
-                        mcpServer.addTool(
-                                        new SyncToolSpecification(
-                                                        new Tool(
-                                                                        tool.getName(),
-                                                                        tool.getDescription(),
-                                                                        tool.getArgumentsSchema()),
-                                                        tool::handler));
-
-                        tool.init();
-                }
-        }
+        // Misc tools
+        TOOLS.put("run_command", new RunCommandTool());
+    }
 }

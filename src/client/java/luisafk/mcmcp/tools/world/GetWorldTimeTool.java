@@ -65,10 +65,6 @@ public class GetWorldTimeTool extends BaseTool {
                     "In rainy weather, beds can no longer be used and, the internal sky-light level reaches 12, the maximum.")
     };
 
-    public String getName() {
-        return "get_world_time";
-    }
-
     public String getDescription() {
         return "Get the current world time of day";
     }

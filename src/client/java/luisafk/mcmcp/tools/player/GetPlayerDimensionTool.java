@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerDimensionTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_dimension";
-    }
-
     public String getDescription() {
         return "Get the current dimension of the player";
     }

@@ -10,10 +10,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class BaritoneGotoTool extends BaseTool {
 
-    public String getName() {
-        return "baritone_goto";
-    }
-
     public String getDescription() {
         return "Uses Baritone to go to a specified location. Internally uses the Baritone #goto command.";
     }

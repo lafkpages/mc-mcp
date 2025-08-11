@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerBiomeTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_biome";
-    }
-
     public String getDescription() {
         return "Get the biome the player is currently in";
     }

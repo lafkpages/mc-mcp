@@ -9,10 +9,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class GetPlayerNameTool extends BaseTool {
 
-    public String getName() {
-        return "get_player_name";
-    }
-
     public String getDescription() {
         return "Get the current player's name";
     }

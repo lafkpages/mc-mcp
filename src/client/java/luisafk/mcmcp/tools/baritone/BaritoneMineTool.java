@@ -11,10 +11,6 @@ import luisafk.mcmcp.tools.BaseTool;
 
 public class BaritoneMineTool extends BaseTool {
 
-    public String getName() {
-        return "baritone_mine_all";
-    }
-
     public String getDescription() {
         return "Uses Baritone to mine all blocks of the given types indefinitely. This tool will keep mining until stopped or no more of the specified blocks can be found. Internally uses the Baritone #mine command.";
     }

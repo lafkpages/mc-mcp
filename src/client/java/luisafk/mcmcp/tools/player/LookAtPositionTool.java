@@ -10,10 +10,6 @@ import net.minecraft.util.math.Vec3d;
 
 public class LookAtPositionTool extends BaseTool {
 
-    public String getName() {
-        return "look_at_position";
-    }
-
     public String getDescription() {
         return "Make the player look at a given position. Useful in combination with the `use_item_in_hand_on_targeted_block` tool to, for example, place blocks.";
     }

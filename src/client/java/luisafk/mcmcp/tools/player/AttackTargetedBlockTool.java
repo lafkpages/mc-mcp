@@ -22,10 +22,6 @@ public class AttackTargetedBlockTool extends BaseTool {
     private BlockPos targetBlockPos = null;
     private Direction targetSide = null;
 
-    public String getName() {
-        return "attack_targeted_block";
-    }
-
     public String getDescription() {
         return "Attack (mine/break) the block the player is currently looking at.";
     }

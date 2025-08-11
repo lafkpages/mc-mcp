@@ -11,10 +11,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class GetBlockAtPositionTool extends BaseTool {
 
-    public String getName() {
-        return "get_block_at_position";
-    }
-
     public String getDescription() {
         return "Get information about the block at a specific position";
     }
